@@ -331,9 +331,9 @@
     .game-card:hover::before { height: 100%; }
 
     /* Cover image */
-    .game-cover-wrap { overflow: hidden; position: relative; width: 100%; flex-shrink: 0; }
+    .game-cover-wrap { overflow: hidden; position: relative; width: 100%; flex-shrink: 0; height: 220px; background: var(--bg2); }
     .game-cover {
-      width: 100%; height: auto; display: block;
+      width: 100%; height: 100%; display: block; object-fit: contain;
       transition: filter 0.3s, transform 0.4s;
     }
 
@@ -519,6 +519,38 @@
     }
     .mail-link:hover { border-color: var(--red); color: var(--red); }
 
+    /* newsletter input styled like social-link */
+    .nl-input {
+      width: 100%;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--white);
+      font-family: 'Afacad', sans-serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      padding: 1rem 1.2rem;
+      outline: none;
+      transition: border-color 0.2s, color var(--transition-speed) ease;
+    }
+    .nl-input::placeholder { color: var(--grey); }
+    .nl-input:focus { border-color: var(--red); }
+
+    /* newsletter button styled like mail-link */
+    .nl-btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      width: fit-content;
+      background: none; border: none; border-bottom: 1px solid var(--border);
+      padding: 0 0 0.4rem 0; margin-top: 0.5rem;
+      color: var(--white); font-family: 'Afacad', sans-serif;
+      font-size: 0.8rem; letter-spacing: 0.1em;
+      cursor: pointer; transition: border-color 0.2s, color 0.2s;
+    }
+    .nl-btn:hover { border-color: var(--red); color: var(--red); }
+
+    .nl-row { display: flex; flex-direction: column; gap: 0; }
+    .newsletter-msg { font-size: 0.68rem; letter-spacing: 0.2em; color: var(--red); opacity: 0; transition: opacity 0.3s; text-transform: uppercase; margin-top: 0.5rem; }
+    .newsletter-msg.visible { opacity: 1; }
+
     /* ─── FOOTER ─── */
     footer {
       border-top: 1px solid var(--border); padding: 2rem 3rem;
@@ -528,6 +560,7 @@
     }
     footer a { color: var(--grey2); text-decoration: none; transition: color 0.2s; }
     footer a:hover { color: var(--red); }
+
 
     /* ─── ANIMATIONS ─── */
     @keyframes fadeUp {
@@ -548,6 +581,7 @@
       section { padding: 4rem 1.5rem; }
       .about-inner { grid-template-columns: 1fr; gap: 2.5rem; }
       .contact-inner { grid-template-columns: 1fr; gap: 3rem; }
+      .newsletter-inner { grid-template-columns: 1fr; gap: 2.5rem; }
       footer { flex-direction: column; gap: 1rem; text-align: center; }
     }
   </style>
@@ -778,12 +812,31 @@
       </div>
     </div>
     <div class="contact-cta">
-      <h3>GOT AN<br><span>IDEA?</span></h3>
-      <p>Feedback, collabs, or just want to say hi — all messages are read. Don't hesitate.</p>
-      <a href="mailto:sologamedev11@gmail.com" class="mail-link">
-        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-        sologamedev11@gmail.com
-      </a>
+
+      <!-- GOT AN IDEA -->
+      <div class="contact-cta-top">
+        <h3>GOT AN<br><span>IDEA?</span></h3>
+        <p>Feedback, collabs, or just want to say hi — all messages are read. Don't hesitate.</p>
+        <a href="mailto:sologamedev11@gmail.com" class="mail-link">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          sologamedev11@gmail.com
+        </a>
+      </div>
+
+      <!-- NEWSLETTER divider -->
+      <div class="cta-divider"></div>
+
+      <!-- STAY IN THE LOOP -->
+      <div class="contact-cta-bottom">
+        <h3>STAY IN<br><span>THE LOOP</span></h3>
+        <p>New games, devlogs, and updates — straight to your inbox. No spam, ever.</p>
+        <div class="nl-row">
+          <input type="email" id="nl-email" class="nl-input" placeholder="your@email.com" />
+          <button class="nl-btn" onclick="nlSubscribe()">Subscribe</button>
+        </div>
+        <span class="newsletter-msg" id="nl-msg">✓ You're in!</span>
+      </div>
+
     </div>
   </div>
 </section>
@@ -852,6 +905,29 @@
     'profile-logo': { dark: 'assets/profile-white.png', light: 'assets/profile-black.png' },
   };
 
+
+  /* ─── NEWSLETTER ─── */
+  async function nlSubscribe() {
+    const input = document.getElementById("nl-email");
+    const msg = document.getElementById("nl-msg");
+    const email = input.value.trim();
+    if (!email || !email.includes("@")) { input.focus(); return; }
+    try {
+      const res = await fetch("https://formspree.io/f/xlgvkdng", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify({ email })
+      });
+      if (res.ok) {
+        input.value = "";
+        input.placeholder = "Thanks for subscribing!";
+        msg.classList.add("visible");
+      } else {
+        msg.textContent = "✗ Try again"; msg.classList.add("visible");
+        setTimeout(() => { msg.classList.remove("visible"); msg.textContent = "✓ You're in!"; }, 3000);
+      }
+    } catch(e) { msg.textContent = "✗ Error"; msg.classList.add("visible"); setTimeout(() => msg.classList.remove("visible"), 3000); }
+  }
   function toggleTheme() {
     const html = document.documentElement;
     const isDark = html.getAttribute('data-theme') === 'dark';
