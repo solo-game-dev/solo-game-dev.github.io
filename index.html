@@ -111,24 +111,40 @@
     /* ─── HERO ─── */
     #hero {
       min-height: 100vh;
-      display: flex; flex-direction: column; justify-content: center;
+      display: flex; align-items: center;
       padding: 8rem 3rem 4rem;
       position: relative; overflow: hidden;
     }
 
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1fr 1.3fr;
+      gap: 4rem;
+      align-items: flex-start;
+      width: 100%;
+      position: relative; z-index: 1;
+      padding-top: 2rem;
+    }
+
     .hero-logo-bg {
       position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-30%, -50%);
-      width: min(65vw, 750px);
+      top: 50%; left: 0;
+      transform: translateY(-50%);
+      width: min(45vw, 500px);
       pointer-events: none; user-select: none; z-index: 0;
       animation: fadeIn 1.2s 0.3s forwards;
       opacity: 0;
     }
 
-    @keyframes fadeIn { from { opacity:0; } to { opacity: 0.1; } }
+    @keyframes fadeIn { from { opacity:0; } to { opacity: 0.07; } }
 
-    .hero-content { position: relative; z-index: 1; max-width: 820px; }
+    .hero-content { position: relative; z-index: 1; }
+
+    .hero-stats {
+      display: flex; gap: 2rem; margin-top: 2.5rem;
+      opacity: 0; animation: fadeUp 0.8s 0.7s forwards;
+    }
+    .stat { text-align: left; }
 
     .hero-eyebrow {
       font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase;
@@ -174,12 +190,6 @@
     .btn-outline { background: transparent; color: var(--white); border: 1px solid var(--border); transition: all 0.2s, border-color 0.2s, color var(--transition-speed) ease; }
     .btn-outline:hover { border-color: var(--white); transform: translateY(-2px); }
 
-    .hero-stats {
-      position: absolute; bottom: 3rem; right: 3rem;
-      display: flex; gap: 3rem;
-      opacity: 0; animation: fadeUp 0.8s 0.7s forwards;
-    }
-    .stat { text-align: right; }
     .stat-num {
       font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; line-height: 1;
       color: var(--white); transition: color var(--transition-speed) ease;
@@ -188,6 +198,87 @@
       font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase;
       color: var(--grey); margin-top: 0.2rem; transition: color var(--transition-speed) ease;
     }
+
+    /* ─── HERO CAROUSEL ─── */
+    .hero-carousel {
+      position: relative; z-index: 1;
+      opacity: 0; animation: fadeUp 0.8s 0.5s forwards;
+      margin-top: 0;
+    }
+
+    .hc-main {
+      position: relative;
+      aspect-ratio: 16/9;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--bg2);
+      transition: border-color var(--transition-speed) ease;
+      width: 100%;
+    }
+
+    .hc-slide {
+      position: absolute; inset: 0;
+      opacity: 0; transition: opacity 0.45s ease;
+      pointer-events: none;
+    }
+    .hc-slide.active { opacity: 1; pointer-events: auto; }
+    .hc-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .hc-slide-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 55%);
+      pointer-events: none;
+    }
+    .hc-slide-label {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 1rem 1.2rem;
+      display: flex; align-items: flex-end; justify-content: space-between;
+    }
+    .hc-slide-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem; letter-spacing: 0.05em; color: #fff;
+    }
+    .hc-slide-tag {
+      font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+    }
+
+    .hc-arrow {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      width: 36px; height: 36px;
+      background: rgba(0,0,0,0.5); border: none; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; z-index: 5; font-size: 1.1rem;
+      transition: background 0.2s;
+    }
+    .hc-arrow:hover { background: var(--red); }
+    .hc-arrow.prev { left: 8px; }
+    .hc-arrow.next { right: 8px; }
+
+    /* Thumbnail strip below */
+    .hc-thumbs {
+      display: flex;
+      gap: 4px;
+      margin-top: 6px;
+    }
+    .hc-thumb {
+      flex: 1;
+      height: 6px;
+      cursor: pointer;
+      background: rgba(255,255,255,0.15);
+      border: none;
+      position: relative;
+      overflow: hidden;
+    }
+    .hc-thumb:hover { background: rgba(255,255,255,0.3); }
+    .hc-thumb-progress {
+      position: absolute; left: 0; top: 0; bottom: 0;
+      width: 0%;
+      background: var(--red);
+    }
+    .hc-thumb.active .hc-thumb-progress {
+      animation: fillBar 4s linear forwards;
+    }
+    @keyframes fillBar { from { width: 0%; } to { width: 100%; } }
 
     /* ─── SHARED SECTION ─── */
     section { padding: 6rem 3rem; transition: background var(--transition-speed) ease; }
@@ -412,10 +503,10 @@
       nav { padding: 1rem 1.5rem; }
       .nav-links { display: none; }
       #hero { padding: 7rem 1.5rem 4rem; }
+      .hero-inner { grid-template-columns: 1fr; gap: 2.5rem; }
       section { padding: 4rem 1.5rem; }
       .about-inner { grid-template-columns: 1fr; gap: 2.5rem; }
       .contact-inner { grid-template-columns: 1fr; gap: 3rem; }
-      .hero-stats { position: static; margin-top: 3rem; justify-content: flex-start; }
       footer { flex-direction: column; gap: 1rem; text-align: center; }
     }
   </style>
@@ -452,23 +543,44 @@
 
 <!-- HERO -->
 <section id="hero">
-  <!-- Big logo behind text -->
-  
-  <div class="hero-content">
-    <div class="hero-eyebrow">Independent Game Studio</div>
-    <h1>SOLO<br><span>GAME</span><br>DEV</h1>
-    <p class="hero-desc">
-      Creating unique gaming experiences – from PSX horror games to challenging puzzles.
-    </p>
-    <div class="hero-ctas">
-      <a href="#games" class="btn btn-primary">View Games</a>
-      <a href="https://sologame-dev.itch.io/" target="_blank" class="btn btn-outline">itch.io Page ↗</a>
+
+
+  <div class="hero-inner">
+
+    <!-- Left: title + desc -->
+    <div class="hero-content">
+      <div class="hero-eyebrow">Independent Game Studio</div>
+      <h1>SOLO<br><span>GAME</span><br>DEV</h1>
+      <p class="hero-desc">
+        Creating unique gaming experiences – from PSX horror games to challenging puzzles.
+      </p>
+      <div class="hero-ctas">
+        <a href="#games" class="btn btn-primary">View Games</a>
+        <a href="https://sologame-dev.itch.io/" target="_blank" class="btn btn-outline">itch.io ↗</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><div class="stat-num">5+</div><div class="stat-label">Games</div></div>
+        <div class="stat"><div class="stat-num">∞</div><div class="stat-label">Ideas</div></div>
+        <div class="stat"><div class="stat-num">1</div><div class="stat-label">Dev</div></div>
+      </div>
     </div>
-  </div>
-  <div class="hero-stats">
-    <div class="stat"><div class="stat-num">5+</div><div class="stat-label">Games</div></div>
-    <div class="stat"><div class="stat-num">∞</div><div class="stat-label">Ideas</div></div>
-    <div class="stat"><div class="stat-num">1</div><div class="stat-label">Dev</div></div>
+
+    <!-- Right: mini Steam-style carousel -->
+    <div class="hero-carousel">
+      <div class="hc-main">
+
+        <div class="hc-slide active"><img src="assets/night-shift.png" alt="The Night Shift" /><div class="hc-slide-overlay"></div><div class="hc-slide-label"><div><div class="hc-slide-title">The Night Shift</div><div class="hc-slide-tag">Horror · Survival</div></div><a href="https://sologame-dev.itch.io/the-night-shift" target="_blank" class="btn btn-primary" style="padding:0.5rem 1rem;font-size:0.65rem;">Play ↗</a></div></div>
+
+        <div class="hc-slide"><img src="assets/spin.png" alt="Spin" /><div class="hc-slide-overlay"></div><div class="hc-slide-label"><div><div class="hc-slide-title">Spin</div><div class="hc-slide-tag">Puzzle</div></div><a href="https://sologame-dev.itch.io/spin" target="_blank" class="btn btn-primary" style="padding:0.5rem 1rem;font-size:0.65rem;">Play ↗</a></div></div>
+
+        <button class="hc-arrow prev" onclick="hcMove(-1)">&#8249;</button>
+        <button class="hc-arrow next" onclick="hcMove(1)">&#8250;</button>
+      </div>
+
+      <!-- Thumbnail strip -->
+      <div class="hc-thumbs" id="hcThumbs"></div>
+    </div>
+
   </div>
 </section>
 
@@ -615,22 +727,65 @@
 </footer>
 
 <script>
-  const label = document.getElementById('theme-label');
+  /* ─── HERO CAROUSEL ─── */
+  const hcGames = [
+    { cover: 'assets/night-shift.png', title: 'The Night Shift', tag: 'Horror · Survival' },
+    { cover: 'assets/spin.png',        title: 'Spin',            tag: 'Puzzle'            },
+  ];
 
+  let hcCurrent = 0;
+  let hcTimer;
+
+  function buildThumbs() {
+    const wrap = document.getElementById('hcThumbs');
+    hcGames.forEach((g, i) => {
+      const t = document.createElement('div');
+      t.className = 'hc-thumb' + (i === 0 ? ' active' : '');
+      t.onclick = () => hcGoTo(i);
+      t.innerHTML = `<div class="hc-thumb-progress"></div>`;
+      wrap.appendChild(t);
+    });
+  }
+
+  function hcGoTo(index) {
+    const slides = document.querySelectorAll('.hc-slide');
+    const thumbs = document.querySelectorAll('.hc-thumb');
+
+    slides[hcCurrent].classList.remove('active');
+    thumbs[hcCurrent].classList.remove('active');
+
+    hcCurrent = (index + hcGames.length) % hcGames.length;
+
+    slides[hcCurrent].classList.add('active');
+
+    // Restart animation by cloning the progress div
+    const prog = thumbs[hcCurrent].querySelector('.hc-thumb-progress');
+    const fresh = prog.cloneNode(true);
+    thumbs[hcCurrent].replaceChild(fresh, prog);
+    thumbs[hcCurrent].classList.add('active');
+
+    clearInterval(hcTimer);
+    hcTimer = setInterval(() => hcGoTo(hcCurrent + 1), 4000);
+  }
+
+  function hcMove(dir) { hcGoTo(hcCurrent + dir); }
+
+  buildThumbs();
+  hcTimer = setInterval(() => hcGoTo(hcCurrent + 1), 4000);
+
+  /* ─── THEME TOGGLE ─── */
+  const label = document.getElementById('theme-label');
   const logoMap = {
-    'nav-logo':      { dark: 'assets/profile-white.png', light: 'assets/profile-black.png' },
-    'hero-logo-bg':  { dark: 'assets/banner-white.png',  light: 'assets/banner-black.png'  },
-    'profile-logo':  { dark: 'assets/profile-white.png', light: 'assets/profile-black.png' },
+    'nav-logo':     { dark: 'assets/profile-white.png', light: 'assets/profile-black.png' },
+    'profile-logo': { dark: 'assets/profile-white.png', light: 'assets/profile-black.png' },
   };
 
   function toggleTheme() {
     const html = document.documentElement;
     const isDark = html.getAttribute('data-theme') === 'dark';
     const newTheme = isDark ? 'light' : 'dark';
-
     html.setAttribute('data-theme', newTheme);
     label.textContent = isDark ? 'Dark' : 'Light';
-
     Object.entries(logoMap).forEach(([id, srcs]) => {
       const el = document.getElementById(id);
       if (el) el.src = srcs[newTheme];
