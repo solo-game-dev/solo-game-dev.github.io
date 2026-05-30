@@ -592,7 +592,8 @@
 <!-- NAV -->
 <nav>
   <a href="#" class="nav-logo">
-    <img id="nav-logo" src="assets/profile-white.png" alt="SGD" />
+    <img id="nav-logo-dark"  src="assets/profile-white.png" alt="SGD" />
+    <img id="nav-logo-light" src="assets/profile-black.png" alt="SGD" style="display:none;" />
     <span>Solo Game Dev</span>
   </a>
   <div class="nav-right">
@@ -757,9 +758,15 @@
     <div class="about-profile">
       <div class="profile-pic-wrap">
         <img 
-          class="profile-pic" id="profile-logo"
+          class="profile-pic" id="profile-logo-dark"
           src="assets/profile-white.png"
           alt="Solo Game Dev Logo"
+        />
+        <img 
+          class="profile-pic" id="profile-logo-light"
+          src="assets/profile-black.png"
+          alt="Solo Game Dev Logo"
+          style="display:none;"
         />
       </div>
       <div class="profile-name">Solo Game Dev</div>
@@ -900,10 +907,6 @@
 
   /* ─── THEME TOGGLE ─── */
   const label = document.getElementById('theme-label');
-  const logoMap = {
-    'nav-logo':     { dark: 'assets/profile-white.png', light: 'assets/profile-black.png' },
-    'profile-logo': { dark: 'assets/profile-white.png', light: 'assets/profile-black.png' },
-  };
 
 
   /* ─── NEWSLETTER ─── */
@@ -934,10 +937,12 @@
     const newTheme = isDark ? 'light' : 'dark';
     html.setAttribute('data-theme', newTheme);
     label.textContent = isDark ? 'Dark' : 'Light';
-    Object.entries(logoMap).forEach(([id, srcs]) => {
-      const el = document.getElementById(id);
-      if (el) el.src = srcs[newTheme];
-    });
+
+    // Show/hide logo pairs based on theme
+    document.getElementById('nav-logo-dark').style.display    = isDark ? 'none'  : '';
+    document.getElementById('nav-logo-light').style.display   = isDark ? ''      : 'none';
+    document.getElementById('profile-logo-dark').style.display  = isDark ? 'none'  : '';
+    document.getElementById('profile-logo-light').style.display = isDark ? ''      : 'none';
   }
 </script>
 </body>
