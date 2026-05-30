@@ -1,11 +1,640 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solo Game Dev</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solo Game Dev</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Afacad:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    /* ─── THEME VARIABLES ─── */
+    :root {
+      --red: #e8333a;
+      --red2: #ff4d4d;
+      --transition-speed: 0.45s;
+    }
+
+    [data-theme="dark"] {
+      --bg:       #0a0a0a;
+      --bg2:      #111111;
+      --bg3:      #161616;
+      --white:    #f0ede8;
+      --grey:     #777;
+      --grey2:    #444;
+      --border:   #222;
+      --nav-bg:   rgba(10,10,10,0.88);
+      --shadow:   rgba(0,0,0,0.6);
+    }
+
+    [data-theme="light"] {
+      --bg:       #f5f2ee;
+      --bg2:      #ebe7e1;
+      --bg3:      #e0dbd4;
+      --white:    #0f0f0f;
+      --grey:     #555;
+      --grey2:    #aaa;
+      --border:   #d0cbc4;
+      --nav-bg:   rgba(245,242,238,0.92);
+      --shadow:   rgba(0,0,0,0.15);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: 'Afacad', sans-serif;
+      overflow-x: hidden;
+      cursor: crosshair;
+      transition: background var(--transition-speed) ease, color var(--transition-speed) ease;
+    }
+
+    /* ─── THEME TOGGLE ─── */
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--grey);
+      cursor: pointer;
+      padding: 0.45rem 0.9rem;
+      font-family: 'Afacad', sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      transition: all 0.2s, border-color 0.2s;
+    }
+    .theme-toggle:hover { border-color: var(--red); color: var(--red); }
+
+    .theme-toggle .icon-sun,
+    .theme-toggle .icon-moon { transition: opacity 0.3s, transform 0.3s; }
+    [data-theme="dark"]  .icon-sun  { opacity: 1; transform: rotate(0deg); }
+    [data-theme="dark"]  .icon-moon { opacity: 0; position: absolute; }
+    [data-theme="light"] .icon-moon { opacity: 1; transform: rotate(0deg); }
+    [data-theme="light"] .icon-sun  { opacity: 0; position: absolute; }
+
+
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.1rem 3rem;
+      background: var(--nav-bg);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      transition: background var(--transition-speed) ease, border-color var(--transition-speed) ease;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 0.75rem; text-decoration: none;
+    }
+    .nav-logo img {
+      height: 32px; width: 32px; object-fit: contain;
+      transition: opacity 0.3s ease;
+    }
+    .nav-logo span {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.35rem; letter-spacing: 0.12em; color: var(--white);
+      transition: color var(--transition-speed) ease;
+    }
+    .nav-right { display: flex; align-items: center; gap: 2rem; }
+    .nav-links { display: flex; gap: 2.2rem; list-style: none; }
+    .nav-links a {
+      color: var(--grey); text-decoration: none;
+      font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--red); }
+
+    /* ─── HERO ─── */
+    #hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 8rem 3rem 4rem;
+      position: relative; overflow: hidden;
+    }
+
+    .hero-logo-bg {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-30%, -50%);
+      width: min(65vw, 750px);
+      pointer-events: none; user-select: none; z-index: 0;
+      animation: fadeIn 1.2s 0.3s forwards;
+      opacity: 0;
+    }
+
+    @keyframes fadeIn { from { opacity:0; } to { opacity: 0.1; } }
+
+    .hero-content { position: relative; z-index: 1; max-width: 820px; }
+
+    .hero-eyebrow {
+      font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--red); margin-bottom: 1.5rem;
+      display: flex; align-items: center; gap: 1rem;
+      opacity: 0; animation: fadeUp 0.8s 0.1s forwards;
+    }
+    .hero-eyebrow::before {
+      content: ''; display: block; width: 40px; height: 1px; background: var(--red);
+    }
+
+    h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(4.5rem, 13vw, 12rem);
+      line-height: 0.9; letter-spacing: -0.01em; margin-bottom: 2rem;
+      opacity: 0; animation: fadeUp 0.8s 0.25s forwards;
+      color: var(--white); transition: color var(--transition-speed) ease;
+    }
+    h1 span { color: var(--red); }
+
+    .hero-desc {
+      font-size: 1rem; line-height: 1.75; color: var(--grey);
+      max-width: 460px; margin-bottom: 3rem;
+      opacity: 0; animation: fadeUp 0.8s 0.4s forwards;
+      transition: color var(--transition-speed) ease;
+    }
+
+    .hero-ctas {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+      opacity: 0; animation: fadeUp 0.8s 0.55s forwards;
+    }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.85rem 2rem;
+      font-family: 'Afacad', sans-serif; font-size: 0.78rem;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      text-decoration: none; border: none; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-primary { background: var(--red); color: #fff; }
+    .btn-primary:hover { background: var(--red2); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(232,51,58,0.35); }
+    .btn-outline { background: transparent; color: var(--white); border: 1px solid var(--border); transition: all 0.2s, border-color 0.2s, color var(--transition-speed) ease; }
+    .btn-outline:hover { border-color: var(--white); transform: translateY(-2px); }
+
+    .hero-stats {
+      position: absolute; bottom: 3rem; right: 3rem;
+      display: flex; gap: 3rem;
+      opacity: 0; animation: fadeUp 0.8s 0.7s forwards;
+    }
+    .stat { text-align: right; }
+    .stat-num {
+      font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; line-height: 1;
+      color: var(--white); transition: color var(--transition-speed) ease;
+    }
+    .stat-label {
+      font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--grey); margin-top: 0.2rem; transition: color var(--transition-speed) ease;
+    }
+
+    /* ─── SHARED SECTION ─── */
+    section { padding: 6rem 3rem; transition: background var(--transition-speed) ease; }
+
+    .section-label {
+      font-size: 0.68rem; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--red); margin-bottom: 1rem;
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .section-label::before { content: ''; display: block; width: 28px; height: 1px; background: var(--red); }
+
+    h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      letter-spacing: 0.02em; line-height: 1; margin-bottom: 3rem;
+      color: var(--white); transition: color var(--transition-speed) ease;
+    }
+
+    /* ─── GAMES ─── */
+    #games { border-top: 1px solid var(--border); transition: border-color var(--transition-speed) ease; }
+
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 2px;
+      background: var(--border);
+      border: 2px solid var(--border);
+      transition: background var(--transition-speed) ease, border-color var(--transition-speed) ease;
+    }
+
+    .game-card {
+      background: var(--bg);
+      position: relative; overflow: hidden;
+      transition: background 0.3s, var(--transition-speed) ease;
+      display: flex; flex-direction: column;
+    }
+    .game-card:hover { background: var(--bg2); }
+
+    /* Red left border on hover */
+    .game-card::before {
+      content: ''; position: absolute; top: 0; left: 0;
+      width: 3px; height: 0; background: var(--red);
+      transition: height 0.4s ease;
+    }
+    .game-card:hover::before { height: 100%; }
+
+    /* Cover image */
+    .game-cover {
+      width: 100%; aspect-ratio: 16/9; object-fit: cover;
+      display: block;
+      filter: saturate(0.85);
+      transition: filter 0.3s, transform 0.4s;
+    }
+    .game-card:hover .game-cover { filter: saturate(1); transform: scale(1.02); }
+    .game-cover-wrap { overflow: hidden; position: relative; }
+
+    .game-cover-wrap::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0; height: 60px;
+      background: linear-gradient(to bottom, transparent, var(--bg));
+      transition: background var(--transition-speed) ease;
+      pointer-events: none;
+    }
+    .game-card:hover .game-cover-wrap::after { background: linear-gradient(to bottom, transparent, var(--bg2)); }
+
+    .game-body { padding: 1.8rem 2rem 2rem; flex: 1; display: flex; flex-direction: column; }
+
+    .game-tag {
+      display: inline-block; font-size: 0.62rem; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--red); border: 1px solid rgba(232,51,58,0.3); padding: 0.25rem 0.6rem;
+      margin-bottom: 1rem;
+    }
+    .game-title {
+      font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 0.04em;
+      margin-bottom: 0.5rem; color: var(--white); transition: color var(--transition-speed) ease;
+    }
+    .game-desc {
+      font-size: 0.88rem; color: var(--grey); line-height: 1.7; margin-bottom: 1.5rem; flex: 1;
+      transition: color var(--transition-speed) ease;
+    }
+
+    .game-footer { display: flex; align-items: center; justify-content: space-between; margin-top: auto; }
+
+
+
+    .game-link {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--white); text-decoration: none; transition: color 0.2s;
+    }
+    .game-link:hover { color: var(--red); }
+    .game-link svg { transition: transform 0.2s; }
+    .game-link:hover svg { transform: translateX(4px); }
+
+    .game-status {
+      font-size: 0.62rem; letter-spacing: 0.15em; text-transform: uppercase;
+      padding: 0.2rem 0.6rem; background: rgba(232,51,58,0.12); color: var(--red); border-radius: 2px;
+    }
+
+    /* More games */
+    .more-games { margin-top: 3rem; border-top: 1px solid var(--border); padding-top: 2.5rem; transition: border-color var(--transition-speed) ease; }
+    .more-games-label { font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--grey); margin-bottom: 1.5rem; }
+    .more-games-list { display: flex; flex-wrap: wrap; gap: 0.8rem; }
+    .more-game-pill {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      padding: 0.65rem 1.2rem; border: 1px solid var(--border);
+      color: var(--grey); text-decoration: none; font-size: 0.75rem; letter-spacing: 0.08em;
+      transition: all 0.2s, border-color var(--transition-speed) ease;
+    }
+    .more-game-pill:hover { border-color: var(--red); color: var(--white); }
+
+    /* ─── ABOUT ─── */
+    #about {
+      border-top: 1px solid var(--border);
+      background: var(--bg2);
+      transition: background var(--transition-speed) ease, border-color var(--transition-speed) ease;
+    }
+    .about-inner {
+      display: grid; grid-template-columns: auto 1fr; gap: 5rem; align-items: start;
+    }
+
+    .about-profile {
+      display: flex; flex-direction: column; align-items: center; gap: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .profile-pic-wrap {
+      position: relative; width: 200px; height: 200px;
+    }
+    .profile-pic-wrap::before, .profile-pic-wrap::after {
+      content: ''; position: absolute; width: 22px; height: 22px;
+    }
+    .profile-pic-wrap::before { top: -3px; right: -3px; border-top: 2px solid var(--red); border-right: 2px solid var(--red); }
+    .profile-pic-wrap::after  { bottom: -3px; left: -3px; border-bottom: 2px solid var(--red); border-left: 2px solid var(--red); }
+
+    .profile-pic {
+      width: 200px; height: 200px;
+      border: 1px solid var(--border);
+      object-fit: contain;
+      display: block;
+      background: var(--bg3);
+      transition: border-color var(--transition-speed) ease;
+    }
+    .profile-name {
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 0.15em;
+      color: var(--white); text-align: center; transition: color var(--transition-speed) ease;
+    }
+    .profile-role {
+      font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--grey); transition: color var(--transition-speed) ease;
+    }
+
+    .about-text h2 { margin-bottom: 1.5rem; }
+    .about-text p {
+      font-size: 1.05rem; line-height: 1.85; color: var(--grey); margin-bottom: 1.2rem;
+      transition: color var(--transition-speed) ease;
+    }
+    .about-text p strong { color: var(--white); transition: color var(--transition-speed) ease; }
+
+    /* ─── CONTACT ─── */
+    #contact {
+      border-top: 1px solid var(--border);
+      transition: border-color var(--transition-speed) ease;
+    }
+    .contact-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; }
+
+    .social-links { display: flex; flex-direction: column; gap: 0.75rem; }
+    .social-link {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 1rem 1.2rem; border: 1px solid var(--border);
+      color: var(--grey); text-decoration: none; font-size: 0.78rem; letter-spacing: 0.1em;
+      transition: all 0.2s, border-color var(--transition-speed) ease, color var(--transition-speed) ease;
+      position: relative; overflow: hidden;
+    }
+    .social-link::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 0;
+      background: rgba(232,51,58,0.07); transition: width 0.3s ease;
+    }
+    .social-link:hover::before { width: 100%; }
+    .social-link:hover { border-color: var(--red); color: var(--white); }
+    .social-icon { width: 18px; height: 18px; flex-shrink: 0; opacity: 0.6; transition: opacity 0.2s; }
+    .social-link:hover .social-icon { opacity: 1; }
+
+    .contact-cta { display: flex; flex-direction: column; justify-content: center; gap: 1.5rem; }
+    .contact-cta h3 {
+      font-family: 'Bebas Neue', sans-serif; font-size: 3rem; letter-spacing: 0.05em; line-height: 1.05;
+      color: var(--white); transition: color var(--transition-speed) ease;
+    }
+    .contact-cta h3 span { color: var(--red); }
+    .contact-cta p { font-size: 0.9rem; color: var(--grey); line-height: 1.8; transition: color var(--transition-speed) ease; }
+
+    .mail-link {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-size: 0.8rem; letter-spacing: 0.1em; color: var(--white); text-decoration: none;
+      border-bottom: 1px solid var(--border); padding-bottom: 0.4rem;
+      transition: border-color 0.2s, color 0.2s, color var(--transition-speed) ease;
+    }
+    .mail-link:hover { border-color: var(--red); color: var(--red); }
+
+    /* ─── FOOTER ─── */
+    footer {
+      border-top: 1px solid var(--border); padding: 2rem 3rem;
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 0.68rem; letter-spacing: 0.1em; color: var(--grey2);
+      transition: border-color var(--transition-speed) ease, color var(--transition-speed) ease;
+    }
+    footer a { color: var(--grey2); text-decoration: none; transition: color 0.2s; }
+    footer a:hover { color: var(--red); }
+
+    /* ─── ANIMATIONS ─── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--red); }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      #hero { padding: 7rem 1.5rem 4rem; }
+      section { padding: 4rem 1.5rem; }
+      .about-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+      .contact-inner { grid-template-columns: 1fr; gap: 3rem; }
+      .hero-stats { position: static; margin-top: 3rem; justify-content: flex-start; }
+      footer { flex-direction: column; gap: 1rem; text-align: center; }
+    }
+  </style>
 </head>
 <body>
-    <h1>ALo</h1>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <img id="nav-logo" src="assets/profile-white.png" alt="SGD" />
+    <span>Solo Game Dev</span>
+  </a>
+  <div class="nav-right">
+    <ul class="nav-links">
+      <li><a href="#games">Games</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a href="https://sologame-dev.itch.io/" target="_blank">itch.io ↗</a></li>
+    </ul>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+      <!-- Sun icon (shown in dark mode = "switch to light") -->
+      <svg class="icon-sun" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+      </svg>
+      <!-- Moon icon (shown in light mode = "switch to dark") -->
+      <svg class="icon-moon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+      <span id="theme-label">Light</span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <!-- Big logo behind text -->
+  
+  <div class="hero-content">
+    <div class="hero-eyebrow">Independent Game Studio</div>
+    <h1>SOLO<br><span>GAME</span><br>DEV</h1>
+    <p class="hero-desc">
+      Creating unique gaming experiences – from PSX horror games to challenging puzzles.
+    </p>
+    <div class="hero-ctas">
+      <a href="#games" class="btn btn-primary">View Games</a>
+      <a href="https://sologame-dev.itch.io/" target="_blank" class="btn btn-outline">itch.io Page ↗</a>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">5+</div><div class="stat-label">Games</div></div>
+    <div class="stat"><div class="stat-num">∞</div><div class="stat-label">Ideas</div></div>
+    <div class="stat"><div class="stat-num">1</div><div class="stat-label">Dev</div></div>
+  </div>
+</section>
+
+<!-- GAMES -->
+<section id="games">
+  <div class="section-label">Portfolio</div>
+  <h2>THE GAMES</h2>
+
+  <div class="games-grid">
+
+    <!-- The Night Shift -->
+    <div class="game-card">
+      <div class="game-cover-wrap">
+        <img class="game-cover" src="assets/night-shift.png" alt="The Night Shift" />
+      </div>
+      <div class="game-body">
+        <div class="game-tag">Horror · Survival</div>
+        <div class="game-title">The Night Shift</div>
+        <p class="game-desc">A retro PSX-style horror story set during the night shift of a remote gas station. Weird customers, creepy noises, and growing dread await.</p>
+
+        <div class="game-footer">
+          <a href="https://sologame-dev.itch.io/the-night-shift" target="_blank" class="game-link">
+            View on itch.io
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+          <span class="game-status">In Development</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Spin -->
+    <div class="game-card">
+      <div class="game-cover-wrap">
+        <img class="game-cover" src="assets/spin.png" alt="Spin" />
+      </div>
+      <div class="game-body">
+        <div class="game-tag">Puzzle</div>
+        <div class="game-title">Spin</div>
+        <p class="game-desc">You can't control the player — you control the level itself. Spin the world to move your character through clever puzzles. Short, polished, and addictive.</p>
+
+        <div class="game-footer">
+          <a href="https://sologame-dev.itch.io/spin" target="_blank" class="game-link">
+            Download on itch.io
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+          <span class="game-status">Released</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- More games -->
+  <div class="more-games">
+    <div class="more-games-label">Also on itch.io</div>
+    <div class="more-games-list">
+      <a href="https://sologame-dev.itch.io/infinite-breakout" target="_blank" class="more-game-pill">Infinite Breakout</a>
+      <a href="https://sologame-dev.itch.io/totallyfairpong" target="_blank" class="more-game-pill">Totally Fair Pong</a>
+      <a href="https://sologame-dev.itch.io/square" target="_blank" class="more-game-pill">Square</a>
+      <a href="https://sologame-dev.itch.io/" target="_blank" class="more-game-pill" style="border-color:rgba(232,51,58,0.4);color:var(--red)">View all →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-inner">
+    <div class="about-profile">
+      <div class="profile-pic-wrap">
+        <img 
+          class="profile-pic" id="profile-logo"
+          src="assets/profile-white.png"
+          alt="Solo Game Dev Logo"
+        />
+      </div>
+      <div class="profile-name">Solo Game Dev</div>
+      <div class="profile-role">Indie Developer</div>
+    </div>
+    <div class="about-text">
+      <div class="section-label">The Studio</div>
+      <h2>ABOUT</h2>
+      <p>
+        <strong>Solo Game Dev</strong>It’s a small independent studio that focuses on developing
+        unique gaming experiences in every genre.
+      </p>
+      <p>
+        From dark <strong>PSX-style horror</strong> to quick <strong>puzzle games</strong> —
+        Each project gets developed with dedication and passion.
+        Only creativity and love for games.
+      </p>
+      <p>
+        Got ideas, feedback, or a business offer? <strong>All messages are welcome.</strong>
+      </p>
+      <br>
+      <a href="#contact" class="btn btn-outline">Get In Touch</a>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-inner">
+    <div>
+      <div class="section-label">Reach Out</div>
+      <h2>CONTACT</h2>
+      <div class="social-links">
+        <a href="https://sologame-dev.itch.io/" target="_blank" class="social-link">
+          <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M3.13 1.338C2.08 1.96.02 4.328 0 4.95v1.03c0 1.303 1.22 2.45 2.325 2.45 1.33 0 2.436-1.102 2.436-2.41 0 1.308 1.07 2.41 2.4 2.41 1.328 0 2.362-1.102 2.362-2.41 0 1.308 1.104 2.41 2.434 2.41h.024c1.33 0 2.434-1.102 2.434-2.41 0 1.308 1.035 2.41 2.363 2.41 1.33 0 2.4-1.102 2.4-2.41 0 1.308 1.106 2.41 2.435 2.41C22.78 8.43 24 7.283 24 5.98V4.95c-.02-.622-2.08-2.99-3.13-3.612C19.61.68 12.08.718 12 .72c-.08-.002-7.61-.04-8.87.618zM12 9.535c-.638 0-1.24-.138-1.807-.376-.396.777-.65 2.02-.65 3.197 0 .05.002.1.002.15-1.756.155-3.83.6-5.53 1.2-.326 1.075-.527 2.23-.527 3.456 0 .63.04 1.248.113 1.855C4.036 20.67 7.86 23.28 12 23.28c4.14 0 7.965-2.61 8.4-4.264.072-.607.113-1.226.113-1.855 0-1.226-.2-2.38-.527-3.456-1.7-.6-3.774-1.045-5.53-1.2 0-.05.002-.1.002-.15 0-1.177-.254-2.42-.65-3.197A4.272 4.272 0 0112 9.535zm-3.5 4.87h7l-.43 4.433-3.07.896-3.07-.896L8.5 14.405z"/></svg>
+          itch.io — sologame-dev.itch.io
+        </a>
+        <a href="https://x.com/SoloGameDev11" target="_blank" class="social-link">
+          <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.26 5.632 5.904-5.632zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          X (Twitter) — @SoloGameDev11
+        </a>
+        <a href="https://www.reddit.com/user/SoloGameDev11/" target="_blank" class="social-link">
+          <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+          Reddit — u/SoloGameDev11
+        </a>
+        <a href="mailto:sologamedev11@gmail.com" class="social-link">
+          <svg class="social-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          Email — sologamedev11@gmail.com
+        </a>
+      </div>
+    </div>
+    <div class="contact-cta">
+      <h3>GOT AN<br><span>IDEA?</span></h3>
+      <p>Feedback, collabs, or just want to say hi — all messages are read. Don't hesitate.</p>
+      <a href="mailto:sologamedev11@gmail.com" class="mail-link">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        sologamedev11@gmail.com
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span>© 2025 Solo Game Dev — All rights reserved</span>
+  <span>
+    <a href="https://sologame-dev.itch.io/" target="_blank">itch.io</a> ·
+    <a href="https://x.com/SoloGameDev11" target="_blank">X</a> ·
+    <a href="https://www.reddit.com/user/SoloGameDev11/" target="_blank">Reddit</a>
+  </span>
+</footer>
+
+<script>
+  const label = document.getElementById('theme-label');
+
+  const logoMap = {
+    'nav-logo':      { dark: 'assets/profile-white.png', light: 'assets/profile-black.png' },
+    'hero-logo-bg':  { dark: 'assets/banner-white.png',  light: 'assets/banner-black.png'  },
+    'profile-logo':  { dark: 'assets/profile-white.png', light: 'assets/profile-black.png' },
+  };
+
+  function toggleTheme() {
+    const html = document.documentElement;
+    const isDark = html.getAttribute('data-theme') === 'dark';
+    const newTheme = isDark ? 'light' : 'dark';
+
+    html.setAttribute('data-theme', newTheme);
+    label.textContent = isDark ? 'Dark' : 'Light';
+
+    Object.entries(logoMap).forEach(([id, srcs]) => {
+      const el = document.getElementById(id);
+      if (el) el.src = srcs[newTheme];
+    });
+  }
+</script>
 </body>
 </html>
