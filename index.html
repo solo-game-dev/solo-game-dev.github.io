@@ -279,14 +279,8 @@
       position: absolute; left: 0; top: 0; bottom: 0;
       width: 0%;
       background: var(--red);
+      transition: none;
     }
-    .hc-thumb.active .hc-thumb-progress {
-      animation: fillBar 4s linear forwards;
-    }
-    .hc-main:hover .hc-thumb-progress {
-      animation-play-state: paused;
-    }
-    @keyframes fillBar { from { width: 0%; } to { width: 100%; } }
 
     /* ─── SHARED SECTION ─── */
     section { padding: 6rem 3rem; transition: background var(--transition-speed) ease; }
@@ -524,13 +518,15 @@
 
     /* ─── FOOTER ─── */
     footer {
-      border-top: 1px solid var(--border); padding: 2rem 3rem;
+      border-top: 1px solid var(--border); padding: 1.2rem 2rem;
       display: flex; justify-content: space-between; align-items: center;
       font-size: 0.68rem; letter-spacing: 0.1em; color: var(--grey2);
       transition: border-color var(--transition-speed) ease, color var(--transition-speed) ease;
+      gap: 1rem;
     }
     footer a { color: var(--grey2); text-decoration: none; transition: color 0.2s; }
     footer a:hover { color: var(--red); }
+    .footer-center { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; text-align: center; flex: 1; }
 
     /* ─── ANIMATIONS ─── */
     @keyframes fadeUp {
@@ -590,6 +586,78 @@
       padding: 0.35rem; cursor: pointer; transition: all 0.15s;
     }
     .sdk-num-btn:hover { background: var(--red); border-color: var(--red); color: #fff; }
+
+    /* ─── SUDOKU FAB ─── */
+    #sudoku-fab {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      color: var(--grey);
+      font-family: 'Afacad', sans-serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s, background var(--transition-speed) ease;
+      flex-shrink: 0;
+    }
+    #sudoku-fab:hover {
+      border-color: var(--red);
+      color: var(--white);
+    }
+
+    /* ─── MED AVATAR ─── */
+    #med-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      overflow: visible;
+      cursor: pointer;
+      text-decoration: none;
+      display: block;
+      flex-shrink: 0;
+      position: relative;
+    }
+    #med-avatar img {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+      border: 2px solid transparent;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    [data-theme="dark"] #med-avatar:hover img {
+      border-color: #fff;
+      box-shadow: 0 0 0 2px #fff, 0 4px 20px var(--shadow);
+    }
+    [data-theme="light"] #med-avatar:hover img {
+      border-color: #000;
+      box-shadow: 0 0 0 2px #000, 0 4px 20px var(--shadow);
+    }
+    #med-tooltip {
+      position: absolute;
+      top: 50%;
+      left: calc(100% + 10px);
+      transform: translateY(-50%) translateX(-4px);
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      color: var(--grey);
+      font-family: 'Afacad', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      padding: 0.35rem 0.75rem;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s, transform 0.2s;
+      box-shadow: 0 4px 16px var(--shadow);
+    }
+    #med-avatar:hover #med-tooltip {
+      opacity: 1;
+      transform: translateY(-50%) translateX(0);
+    }
   </style>
   <link rel="icon" type="image/png" href="assets/profile-white.png">
 </head>
@@ -830,18 +898,25 @@
 
 <!-- FOOTER -->
 <footer>
-  <span>© 2025 Solo Game Dev — All rights reserved</span>
-  <span>
-    <a href="https://sologame-dev.itch.io/" target="_blank">itch.io</a> ·
-    <a href="https://x.com/SoloGameDev11" target="_blank">X</a> ·
-    <a href="https://www.reddit.com/user/SoloGameDev11/" target="_blank">Reddit</a>
-  </span>
-</footer>
+  <!-- Med avatar — left -->
+  <a id="med-avatar" href="https://med74.rf.gd/" target="_blank" rel="noopener">
+    <img src="assets/med74.png" alt="med" />
+    <div id="med-tooltip">Special thanks to med74</div>
+  </a>
 
-<!-- Floating Sudoku button -->
-<button onclick="openSudoku()" style="position:fixed;bottom:1.5rem;right:1.5rem;z-index:500;background:var(--bg2);border:1px solid var(--border);color:var(--grey);font-family:'Afacad',sans-serif;font-size:0.68rem;letter-spacing:0.15em;text-transform:uppercase;padding:0.6rem 1.1rem;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 20px var(--shadow);" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--white)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--grey)'">
-  Play Sudoku
-</button>
+  <!-- Center: copyright + links -->
+  <div class="footer-center">
+    <span>© 2025 Solo Game Dev — All rights reserved</span>
+    <span>
+      <a href="https://sologame-dev.itch.io/" target="_blank">itch.io</a> ·
+      <a href="https://x.com/SoloGameDev11" target="_blank">X</a> ·
+      <a href="https://www.reddit.com/user/SoloGameDev11/" target="_blank">Reddit</a>
+    </span>
+  </div>
+
+  <!-- Sudoku button — right -->
+  <button id="sudoku-fab" onclick="openSudoku()">Play Sudoku</button>
+</footer>
 
 <!-- SUDOKU MODAL -->
 <div id="sudoku-modal" style="display:none;position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);align-items:center;justify-content:center;">
@@ -905,7 +980,37 @@
   ];
 
   let hcCurrent = 0;
-  let hcTimer;
+  let hcHovered = false;
+
+  // RAF-based progress bar
+  const HC_DURATION = 4000; // ms per slide
+  let hcProgress = 0;       // 0–1
+  let hcLastTime = null;
+  let hcRafId = null;
+
+  function hcTick(ts) {
+    if (!hcLastTime) hcLastTime = ts;
+    if (!hcHovered) {
+      const delta = ts - hcLastTime;
+      hcProgress += delta / HC_DURATION;
+      if (hcProgress >= 1) {
+        hcProgress = 0;
+        hcLastTime = ts;
+        hcGoTo(hcCurrent + 1);
+        hcRafId = requestAnimationFrame(hcTick);
+        return;
+      }
+      hcSetBarWidth(hcProgress);
+    }
+    hcLastTime = ts;
+    hcRafId = requestAnimationFrame(hcTick);
+  }
+
+  function hcSetBarWidth(p) {
+    const thumbs = document.querySelectorAll('.hc-thumb');
+    const bar = thumbs[hcCurrent] && thumbs[hcCurrent].querySelector('.hc-thumb-progress');
+    if (bar) bar.style.width = (p * 100) + '%';
+  }
 
   function buildThumbs() {
     const wrap = document.getElementById('hcThumbs');
@@ -922,33 +1027,38 @@
     const slides = document.querySelectorAll('.hc-slide');
     const thumbs = document.querySelectorAll('.hc-thumb');
 
+    // Reset old bar to full (completed) or empty
+    const oldBar = thumbs[hcCurrent] && thumbs[hcCurrent].querySelector('.hc-thumb-progress');
+    if (oldBar) oldBar.style.width = '0%';
     slides[hcCurrent].classList.remove('active');
     thumbs[hcCurrent].classList.remove('active');
 
     hcCurrent = (index + hcGames.length) % hcGames.length;
 
     slides[hcCurrent].classList.add('active');
-
-    // Restart animation by cloning the progress div
-    const prog = thumbs[hcCurrent].querySelector('.hc-thumb-progress');
-    const fresh = prog.cloneNode(true);
-    thumbs[hcCurrent].replaceChild(fresh, prog);
     thumbs[hcCurrent].classList.add('active');
 
-    clearInterval(hcTimer);
-    hcTimer = setInterval(() => hcGoTo(hcCurrent + 1), 4000);
+    // Reset progress for new slide
+    hcProgress = 0;
+    hcLastTime = null;
+    hcSetBarWidth(0);
   }
 
   function hcMove(dir) { hcGoTo(hcCurrent + dir); }
 
   buildThumbs();
-  hcTimer = setInterval(() => hcGoTo(hcCurrent + 1), 4000);
 
   const hcMainEl = document.querySelector('.hc-main');
-  hcMainEl.addEventListener('mouseenter', () => clearInterval(hcTimer));
-  hcMainEl.addEventListener('mouseleave', () => {
-    hcTimer = setInterval(() => hcGoTo(hcCurrent + 1), 4000);
+
+  hcMainEl.addEventListener('mouseenter', () => {
+    hcHovered = true;
   });
+  hcMainEl.addEventListener('mouseleave', () => {
+    hcHovered = false;
+    hcLastTime = null; // reset delta so no jump on resume
+  });
+
+  hcRafId = requestAnimationFrame(hcTick);
 
   /* ─── THEME TOGGLE ─── */
   const label = document.getElementById('theme-label');
@@ -976,11 +1086,16 @@
   const sdkRemove = { easy: 36, medium: 46, hard: 54 };
 
   function openSudoku() {
-    document.getElementById('sudoku-modal').style.display = 'flex';
+    const modal = document.getElementById('sudoku-modal');
+    modal.style.display = 'flex';
     if (!sdkBoard.length) newSudokuGame();
   }
   function closeSudoku() {
     document.getElementById('sudoku-modal').style.display = 'none';
+  }
+  function isSudokuOpen() {
+    const modal = document.getElementById('sudoku-modal');
+    return modal.style.display === 'flex';
   }
   document.getElementById('sudoku-modal').addEventListener('click', e => {
     if (e.target === document.getElementById('sudoku-modal')) closeSudoku();
@@ -1108,7 +1223,7 @@
   }
 
   document.addEventListener('keydown', e => {
-    if (document.getElementById('sudoku-modal').style.display === 'none') return;
+    if (!isSudokuOpen()) return;
     if (e.key >= '1' && e.key <= '9') sdkInput(+e.key);
     if (e.key === 'Backspace' || e.key === 'Delete' || e.key === '0') sdkInput(0);
     if (e.key === 'Escape') closeSudoku();
