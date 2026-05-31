@@ -302,70 +302,69 @@
     /* ─── GAMES ─── */
     #games { border-top: 1px solid var(--border); transition: border-color var(--transition-speed) ease; }
 
-    .games-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    .games-list {
+      display: flex;
+      flex-direction: column;
       gap: 2px;
       background: var(--border);
       border: 2px solid var(--border);
       transition: background var(--transition-speed) ease, border-color var(--transition-speed) ease;
     }
 
-    .game-card {
+    .game-row {
+      display: grid;
+      grid-template-columns: 55% 1fr;
+      min-height: clamp(380px, calc(55vw * 9 / 16), 520px);
+      position: relative;
+      overflow: hidden;
       background: var(--bg);
-      position: relative; overflow: hidden;
-      transition: background 0.3s, var(--transition-speed) ease;
-      display: flex; flex-direction: column;
+      transition: background 0.35s;
     }
-    .game-card:hover { background: var(--bg2); }
+    .game-row:hover { background: var(--bg2); }
 
-    /* Red left border on hover */
-    .game-card::before {
+    /* Red left accent */
+    .game-row::after {
       content: ''; position: absolute; top: 0; left: 0;
       width: 3px; height: 0; background: var(--red);
-      transition: height 0.4s ease;
+      transition: height 0.45s ease;
+      z-index: 10;
     }
-    .game-card:hover::before { height: 100%; }
+    .game-row:hover::after { height: 100%; }
 
-    /* Cover image */
-    .game-cover-wrap { overflow: hidden; position: relative; width: 100%; height: 220px; flex-shrink: 0; }
-    .game-cover {
-      width: 100%; height: 100%; object-fit: cover; display: block;
-      transition: filter 0.3s, transform 0.4s;
+    /* Right column (text) */
+    .game-row-left {
+      padding: 2.8rem 2.5rem;
+      display: flex; flex-direction: column;
+      justify-content: center;
+      position: relative; z-index: 2;
     }
 
-    .game-cover-wrap::after {
-      content: '';
-      position: absolute; bottom: 0; left: 0; right: 0; height: 60px;
-      background: linear-gradient(to bottom, transparent, var(--bg));
-      transition: background var(--transition-speed) ease;
-      pointer-events: none;
+    .game-row-tag {
+      font-size: 0.6rem; letter-spacing: 0.28em; text-transform: uppercase;
+      color: var(--red); border: 1px solid rgba(232,51,58,0.3);
+      display: inline-block; padding: 0.2rem 0.55rem; margin-top: 0.6rem; margin-bottom: 0.8rem;
     }
-    .game-card:hover .game-cover-wrap::after { background: linear-gradient(to bottom, transparent, var(--bg2)); }
 
-    .game-body { padding: 1.8rem 2rem 2rem; flex: 1; display: flex; flex-direction: column; }
-
-    .game-tag {
-      display: inline-block; font-size: 0.62rem; letter-spacing: 0.22em; text-transform: uppercase;
-      color: var(--red); border: 1px solid rgba(232,51,58,0.3); padding: 0.25rem 0.6rem;
-      margin-bottom: 1rem;
-    }
-    .game-title {
-      font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 0.04em;
-      margin-bottom: 0.5rem; color: var(--white); transition: color var(--transition-speed) ease;
-    }
-    .game-desc {
-      font-size: 0.88rem; color: var(--grey); line-height: 1.7; margin-bottom: 1.5rem; flex: 1;
+    .game-row-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2rem, 3.5vw, 3.5rem);
+      letter-spacing: 0.03em; line-height: 1;
+      color: var(--white); margin-bottom: 0.75rem;
       transition: color var(--transition-speed) ease;
     }
 
-    .game-footer { display: flex; align-items: center; justify-content: space-between; margin-top: auto; }
+    .game-row-desc {
+      font-size: 0.86rem; color: var(--grey);
+      line-height: 1.75; max-width: 380px;
+      margin-bottom: 1.5rem;
+      transition: color var(--transition-speed) ease;
+    }
 
-
+    .game-row-footer { display: flex; align-items: center; gap: 1.5rem; }
 
     .game-link {
       display: inline-flex; align-items: center; gap: 0.5rem;
-      font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase;
+      font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase;
       color: var(--white); text-decoration: none; transition: color 0.2s;
     }
     .game-link:hover { color: var(--red); }
@@ -373,8 +372,33 @@
     .game-link:hover svg { transform: translateX(4px); }
 
     .game-status {
-      font-size: 0.62rem; letter-spacing: 0.15em; text-transform: uppercase;
-      padding: 0.2rem 0.6rem; background: rgba(232,51,58,0.12); color: var(--red); border-radius: 2px;
+      font-size: 0.58rem; letter-spacing: 0.15em; text-transform: uppercase;
+      padding: 0.2rem 0.55rem; background: rgba(232,51,58,0.12); color: var(--red);
+    }
+
+    /* Right column: image panel */
+    .game-row-right { position: relative; overflow: hidden; }
+
+    .game-row-img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.65s ease, filter 0.4s ease;
+      filter: brightness(0.88) saturate(0.9);
+    }
+    .game-row:hover .game-row-img {
+      transform: scale(1.05);
+      filter: brightness(1) saturate(1);
+    }
+
+    /* Gradient bleed from right (text side) into image */
+    .game-row-right::before {
+      content: ''; position: absolute; inset: 0; right: -1px;
+      background: linear-gradient(to left, rgba(10,10,10,0.55) 0%, transparent 22%);
+      z-index: 1; pointer-events: none;
+      transition: background var(--transition-speed) ease;
+    }
+    .game-row:hover .game-row-right::before {
+      background: linear-gradient(to left, rgba(17,17,17,0.55) 0%, transparent 22%);
     }
 
     /* More games */
@@ -548,6 +572,13 @@
       .about-inner { grid-template-columns: 1fr; gap: 2.5rem; }
       .contact-inner { grid-template-columns: 1fr; gap: 3rem; }
       footer { flex-direction: column; gap: 1rem; text-align: center; }
+
+      /* Game rows go single-column on mobile */
+      .game-row { grid-template-columns: 1fr; min-height: auto; }
+      .game-row-right { height: 200px; order: -1; }
+      .game-row-right::before { background: linear-gradient(to bottom, transparent 60%, var(--bg) 100%) !important; }
+      .game-row:hover .game-row-right::before { background: linear-gradient(to bottom, transparent 60%, var(--bg2) 100%) !important; }
+      .game-row-left { padding: 1.8rem 1.5rem; }
     }
 
     /* ─── SUDOKU ─── */
@@ -738,44 +769,46 @@
   <div class="section-label">Portfolio</div>
   <h2>THE GAMES</h2>
 
-  <div class="games-grid">
+  <div class="games-list">
 
     <!-- The Night Shift -->
-    <div class="game-card">
-      <div class="game-cover-wrap">
-        <img class="game-cover" src="assets/night-shift.png" alt="The Night Shift" />
+    <div class="game-row" style="cursor:pointer" onclick="if(!event.target.closest('a'))window.open('https://sologame-dev.itch.io/the-night-shift','_blank')">
+      <div class="game-row-right">
+        <img class="game-row-img" src="assets/night-shift.png" alt="The Night Shift" />
       </div>
-      <div class="game-body">
-        <div class="game-tag">Horror · Survival</div>
-        <div class="game-title">The Night Shift</div>
-        <p class="game-desc">A retro PSX-style horror story set during the night shift of a remote gas station. Weird customers, creepy noises, and growing dread await.</p>
-
-        <div class="game-footer">
-          <a href="https://sologame-dev.itch.io/the-night-shift" target="_blank" class="game-link">
-            View on itch.io
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </a>
-          <span class="game-status">In Development</span>
+      <div class="game-row-left">
+        <div>
+          <div class="game-row-title">The Night Shift</div>
+          <div class="game-row-tag">Horror · Survival</div>
+          <p class="game-row-desc">A retro PSX-style horror story set during the night shift of a remote gas station. Weird customers, creepy noises, and growing dread await.</p>
+          <div class="game-row-footer">
+            <a href="https://sologame-dev.itch.io/the-night-shift" target="_blank" class="game-link">
+              View on itch.io
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+            <span class="game-status">In Development</span>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Spin -->
-    <div class="game-card">
-      <div class="game-cover-wrap">
-        <img class="game-cover" src="assets/spin.png" alt="Spin" />
+    <div class="game-row" style="cursor:pointer" onclick="if(!event.target.closest('a'))window.open('https://sologame-dev.itch.io/spin','_blank')">
+      <div class="game-row-right">
+        <img class="game-row-img" src="assets/spin.png" alt="Spin" />
       </div>
-      <div class="game-body">
-        <div class="game-tag">Puzzle</div>
-        <div class="game-title">Spin</div>
-        <p class="game-desc">You can't control the player — you control the level itself. Spin the world to move your character through clever puzzles. Short, polished, and addictive.</p>
-
-        <div class="game-footer">
-          <a href="https://sologame-dev.itch.io/spin" target="_blank" class="game-link">
-            Download on itch.io
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </a>
-          <span class="game-status">Released</span>
+      <div class="game-row-left">
+        <div>
+          <div class="game-row-title">Spin</div>
+          <div class="game-row-tag">Puzzle</div>
+          <p class="game-row-desc">You can't control the player — you control the level itself. Spin the world to move your character through clever puzzles. Short, polished, and addictive.</p>
+          <div class="game-row-footer">
+            <a href="https://sologame-dev.itch.io/spin" target="_blank" class="game-link">
+              Download on itch.io
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+            <span class="game-status">Released</span>
+          </div>
         </div>
       </div>
     </div>
