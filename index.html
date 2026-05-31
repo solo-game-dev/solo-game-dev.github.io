@@ -280,9 +280,13 @@
       width: 0%;
       background: var(--red);
     }
+    .hc-thumb.active .hc-thumb-progress {
+      animation: fillBar 4s linear forwards;
+    }
     .hc-main:hover .hc-thumb-progress {
       animation-play-state: paused;
     }
+    @keyframes fillBar { from { width: 0%; } to { width: 100%; } }
 
     /* ─── SHARED SECTION ─── */
     section { padding: 6rem 3rem; transition: background var(--transition-speed) ease; }
@@ -549,6 +553,43 @@
       .contact-inner { grid-template-columns: 1fr; gap: 3rem; }
       footer { flex-direction: column; gap: 1rem; text-align: center; }
     }
+
+    /* ─── SUDOKU ─── */
+    .sdk-diff-btn {
+      background: none; border: 1px solid var(--border); color: var(--grey);
+      font-family: 'Afacad', sans-serif; font-size: 0.72rem; letter-spacing: 0.12em;
+      text-transform: uppercase; padding: 0.35rem 0.8rem; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .sdk-diff-btn:hover { border-color: var(--red); color: var(--white); }
+    .sdk-diff-active { border-color: var(--red) !important; color: var(--red) !important; }
+
+    .sdk-cell {
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: clamp(0.65rem, 1.6vw, 0.9rem);
+      font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em;
+      cursor: pointer; position: relative;
+      transition: background 0.15s;
+      aspect-ratio: 1;
+    }
+    .sdk-cell.given { color: var(--white); }
+    .sdk-cell.user  { color: var(--red); }
+    .sdk-cell.selected { background: rgba(232,51,58,0.18) !important; }
+    .sdk-cell.highlight { background: rgba(232,51,58,0.06); }
+    .sdk-cell.error { color: #ff6b6b !important; }
+    .sdk-cell:hover:not(.given) { background: rgba(232,51,58,0.1); }
+
+    /* thick borders for 3x3 boxes */
+    .sdk-cell[data-col="2"], .sdk-cell[data-col="5"] { border-right: 2px solid var(--white); }
+    .sdk-cell[data-row="2"], .sdk-cell[data-row="5"] { border-bottom: 2px solid var(--white); }
+
+    .sdk-num-btn {
+      background: var(--bg3); border: 1px solid var(--border); color: var(--white);
+      font-family: 'Bebas Neue', sans-serif; font-size: 0.9rem; letter-spacing: 0.05em;
+      padding: 0.35rem; cursor: pointer; transition: all 0.15s;
+    }
+    .sdk-num-btn:hover { background: var(--red); border-color: var(--red); color: #fff; }
   </style>
   <link rel="icon" type="image/png" href="assets/profile-white.png">
 </head>
@@ -797,6 +838,65 @@
   </span>
 </footer>
 
+<!-- Floating Sudoku button -->
+<button onclick="openSudoku()" style="position:fixed;bottom:1.5rem;right:1.5rem;z-index:500;background:var(--bg2);border:1px solid var(--border);color:var(--grey);font-family:'Afacad',sans-serif;font-size:0.68rem;letter-spacing:0.15em;text-transform:uppercase;padding:0.6rem 1.1rem;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 20px var(--shadow);" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--white)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--grey)'">
+  Play Sudoku
+</button>
+
+<!-- SUDOKU MODAL -->
+<div id="sudoku-modal" style="display:none;position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);align-items:center;justify-content:center;">
+  <div id="sudoku-box" style="background:var(--bg2);border:1px solid var(--border);padding:1.2rem;max-width:380px;width:95vw;position:relative;font-family:'Afacad',sans-serif;max-height:95vh;overflow-y:auto;">
+
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.8rem;">
+      <div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:0.08em;color:var(--white);">SUDOKU</div>
+        <div style="font-size:0.68rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--grey);">Infinite — <span id="sdk-difficulty">Medium</span></div>
+      </div>
+      <div style="display:flex;gap:0.6rem;align-items:center;">
+        <div style="font-size:0.9rem;color:var(--grey);letter-spacing:0.05em;" id="sdk-timer">00:00</div>
+        <button onclick="newSudokuGame()" style="background:var(--red);border:none;color:#fff;font-family:'Afacad',sans-serif;font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;padding:0.4rem 0.9rem;cursor:pointer;">New</button>
+        <button onclick="closeSudoku()" style="background:none;border:1px solid var(--border);color:var(--grey);font-family:'Afacad',sans-serif;font-size:0.7rem;padding:0.4rem 0.7rem;cursor:pointer;line-height:1;">✕</button>
+      </div>
+    </div>
+
+    <!-- Difficulty -->
+    <div style="display:flex;gap:0.4rem;margin-bottom:0.7rem;">
+      <button onclick="setSdkDiff('easy')"   id="sdk-easy"   class="sdk-diff-btn">Easy</button>
+      <button onclick="setSdkDiff('medium')" id="sdk-medium" class="sdk-diff-btn sdk-diff-active">Medium</button>
+      <button onclick="setSdkDiff('hard')"   id="sdk-hard"   class="sdk-diff-btn">Hard</button>
+    </div>
+
+    <!-- Grid -->
+    <div id="sdk-grid" style="display:grid;grid-template-columns:repeat(9,1fr);border:2px solid var(--white);width:100%;aspect-ratio:1;"></div>
+
+    <!-- Number pad -->
+    <div style="display:grid;grid-template-columns:repeat(9,1fr);gap:3px;margin-top:0.5rem;">
+      <button onclick="sdkInput(1)" class="sdk-num-btn">1</button>
+      <button onclick="sdkInput(2)" class="sdk-num-btn">2</button>
+      <button onclick="sdkInput(3)" class="sdk-num-btn">3</button>
+      <button onclick="sdkInput(4)" class="sdk-num-btn">4</button>
+      <button onclick="sdkInput(5)" class="sdk-num-btn">5</button>
+      <button onclick="sdkInput(6)" class="sdk-num-btn">6</button>
+      <button onclick="sdkInput(7)" class="sdk-num-btn">7</button>
+      <button onclick="sdkInput(8)" class="sdk-num-btn">8</button>
+      <button onclick="sdkInput(9)" class="sdk-num-btn">9</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-top:3px;">
+      <button onclick="sdkInput(0)" class="sdk-num-btn" style="font-size:0.7rem;letter-spacing:0.1em;">ERASE</button>
+      <button onclick="sdkHint()" class="sdk-num-btn" style="font-size:0.7rem;letter-spacing:0.1em;">HINT</button>
+    </div>
+
+    <!-- Win overlay inside modal -->
+    <div id="sdk-win" style="display:none;position:absolute;inset:0;background:rgba(10,10,10,0.92);backdrop-filter:blur(4px);flex-direction:column;align-items:center;justify-content:center;gap:0.8rem;z-index:10;text-align:center;padding:2rem;">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:2.5rem;letter-spacing:0.1em;color:var(--red);">YOU WIN!</div>
+      <div style="font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;color:#aaa;">Solved in <span id="sdk-win-time" style="color:var(--white);"></span></div>
+      <div id="sdk-countdown" style="font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:0.15em;color:var(--grey);margin-top:0.5rem;">New game in 3...</div>
+      <button onclick="cancelCountdownAndNew()" style="margin-top:0.5rem;background:var(--red);border:none;color:#fff;font-family:'Afacad',sans-serif;font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;padding:0.6rem 1.4rem;cursor:pointer;">Play Now</button>
+    </div>
+  </div>
+</div>
+
 <script>
   /* ─── HERO CAROUSEL ─── */
   const hcGames = [
@@ -841,72 +941,13 @@
 
   function hcMove(dir) { hcGoTo(hcCurrent + dir); }
 
-  const SLIDE_DURATION = 4000;
-  let hcElapsed = 0;
-  let hcPaused = false;
-  let hcAnimFrame = null;
-  let hcProgressStart = null;
-
-  function startProgress() {
-    cancelAnimationFrame(hcAnimFrame);
-    hcProgressStart = performance.now() - hcElapsed;
-
-    const thumbs = document.querySelectorAll('.hc-thumb');
-
-    function tick(now) {
-      const elapsed = now - hcProgressStart;
-      const pct = Math.min((elapsed / SLIDE_DURATION) * 100, 100);
-      const prog = thumbs[hcCurrent].querySelector('.hc-thumb-progress');
-      if (prog) prog.style.width = pct + '%';
-
-      if (elapsed >= SLIDE_DURATION) {
-        if (!hcPaused) {
-          hcElapsed = 0;
-          hcGoTo(hcCurrent + 1);
-        }
-        return;
-      }
-      hcAnimFrame = requestAnimationFrame(tick);
-    }
-
-    hcAnimFrame = requestAnimationFrame(tick);
-  }
-
-  function hcGoTo(index) {
-    cancelAnimationFrame(hcAnimFrame);
-    const slides = document.querySelectorAll('.hc-slide');
-    const thumbs = document.querySelectorAll('.hc-thumb');
-
-    slides[hcCurrent].classList.remove('active');
-    thumbs[hcCurrent].classList.remove('active');
-    const oldProg = thumbs[hcCurrent].querySelector('.hc-thumb-progress');
-    if (oldProg) oldProg.style.width = '0%';
-
-    hcCurrent = (index + hcGames.length) % hcGames.length;
-    hcElapsed = 0;
-
-    slides[hcCurrent].classList.add('active');
-    thumbs[hcCurrent].classList.add('active');
-
-    if (!hcPaused) startProgress();
-  }
-
-  function hcMove(dir) { hcGoTo(hcCurrent + dir); }
-
   buildThumbs();
-  startProgress();
+  hcTimer = setInterval(() => hcGoTo(hcCurrent + 1), 4000);
 
   const hcMainEl = document.querySelector('.hc-main');
-  hcMainEl.addEventListener('mouseenter', () => {
-    hcPaused = true;
-    const prog = document.querySelectorAll('.hc-thumb')[hcCurrent].querySelector('.hc-thumb-progress');
-    const currentPct = parseFloat(prog.style.width || '0');
-    hcElapsed = (currentPct / 100) * SLIDE_DURATION;
-    cancelAnimationFrame(hcAnimFrame);
-  });
+  hcMainEl.addEventListener('mouseenter', () => clearInterval(hcTimer));
   hcMainEl.addEventListener('mouseleave', () => {
-    hcPaused = false;
-    startProgress();
+    hcTimer = setInterval(() => hcGoTo(hcCurrent + 1), 4000);
   });
 
   /* ─── THEME TOGGLE ─── */
@@ -926,6 +967,211 @@
       const el = document.getElementById(id);
       if (el) el.src = srcs[newTheme];
     });
+  }
+
+  /* ─── SUDOKU ─── */
+  let sdkSolution = [], sdkPuzzle = [], sdkBoard = [], sdkSelected = null;
+  let sdkDiff = 'medium', sdkTimerInterval, sdkSeconds = 0, sdkSolved = false;
+  let sdkCountdownTimer = null;
+  const sdkRemove = { easy: 36, medium: 46, hard: 54 };
+
+  function openSudoku() {
+    document.getElementById('sudoku-modal').style.display = 'flex';
+    if (!sdkBoard.length) newSudokuGame();
+  }
+  function closeSudoku() {
+    document.getElementById('sudoku-modal').style.display = 'none';
+  }
+  document.getElementById('sudoku-modal').addEventListener('click', e => {
+    if (e.target === document.getElementById('sudoku-modal')) closeSudoku();
+  });
+
+  function setSdkDiff(d) {
+    sdkDiff = d;
+    document.querySelectorAll('.sdk-diff-btn').forEach(b => b.classList.remove('sdk-diff-active'));
+    document.getElementById('sdk-' + d).classList.add('sdk-diff-active');
+    document.getElementById('sdk-difficulty').textContent = d.charAt(0).toUpperCase() + d.slice(1);
+    newSudokuGame();
+  }
+
+  function newSudokuGame() {
+    clearInterval(sdkTimerInterval);
+    clearInterval(sdkCountdownTimer);
+    sdkSeconds = 0; sdkSolved = false;
+    document.getElementById('sdk-win').style.display = 'none';
+    document.getElementById('sdk-timer').textContent = '00:00';
+    sdkSolution = generateSolution();
+    sdkPuzzle = makePuzzle(sdkSolution, sdkRemove[sdkDiff]);
+    sdkBoard = sdkPuzzle.map(r => [...r]);
+    sdkSelected = null;
+    renderGrid();
+    sdkTimerInterval = setInterval(() => {
+      if (!sdkSolved) {
+        sdkSeconds++;
+        const m = String(Math.floor(sdkSeconds/60)).padStart(2,'0');
+        const s = String(sdkSeconds%60).padStart(2,'0');
+        document.getElementById('sdk-timer').textContent = m+':'+s;
+      }
+    }, 1000);
+  }
+
+  function renderGrid() {
+    const grid = document.getElementById('sdk-grid');
+    grid.innerHTML = '';
+    for (let r = 0; r < 9; r++) {
+      for (let c = 0; c < 9; c++) {
+        const cell = document.createElement('div');
+        cell.className = 'sdk-cell';
+        cell.dataset.row = r; cell.dataset.col = c;
+        const val = sdkBoard[r][c];
+        if (sdkPuzzle[r][c] !== 0) {
+          cell.classList.add('given');
+          cell.textContent = sdkPuzzle[r][c];
+        } else if (val !== 0) {
+          cell.classList.add(val === sdkSolution[r][c] ? 'user' : 'error');
+          cell.textContent = val;
+        }
+        cell.addEventListener('click', () => selectCell(r, c));
+        grid.appendChild(cell);
+      }
+    }
+    if (sdkSelected) highlightCells(sdkSelected[0], sdkSelected[1]);
+  }
+
+  function selectCell(r, c) {
+    sdkSelected = [r, c];
+    highlightCells(r, c);
+  }
+
+  function highlightCells(r, c) {
+    document.querySelectorAll('.sdk-cell').forEach(cell => {
+      cell.classList.remove('selected', 'highlight');
+      const cr = +cell.dataset.row, cc = +cell.dataset.col;
+      const sameBox = Math.floor(cr/3)===Math.floor(r/3) && Math.floor(cc/3)===Math.floor(c/3);
+      if (cr === r && cc === c) cell.classList.add('selected');
+      else if (cr === r || cc === c || sameBox) cell.classList.add('highlight');
+    });
+  }
+
+  function sdkInput(num) {
+    if (!sdkSelected || sdkSolved) return;
+    const [r, c] = sdkSelected;
+    if (sdkPuzzle[r][c] !== 0) return;
+    sdkBoard[r][c] = num;
+    renderGrid();
+    if (num !== 0 && isSolved()) {
+      sdkSolved = true;
+      clearInterval(sdkTimerInterval);
+      const m = String(Math.floor(sdkSeconds/60)).padStart(2,'0');
+      const s = String(sdkSeconds%60).padStart(2,'0');
+      showWin(m + ':' + s);
+    }
+  }
+
+  function showWin(timeStr) {
+    const win = document.getElementById('sdk-win');
+    win.style.display = 'flex';
+    document.getElementById('sdk-win-time').textContent = timeStr;
+    let count = 3;
+    document.getElementById('sdk-countdown').textContent = `New game in ${count}...`;
+    sdkCountdownTimer = setInterval(() => {
+      count--;
+      if (count <= 0) {
+        clearInterval(sdkCountdownTimer);
+        win.style.display = 'none';
+        newSudokuGame();
+      } else {
+        document.getElementById('sdk-countdown').textContent = `New game in ${count}...`;
+      }
+    }, 1000);
+  }
+
+  function cancelCountdownAndNew() {
+    clearInterval(sdkCountdownTimer);
+    document.getElementById('sdk-win').style.display = 'none';
+    newSudokuGame();
+  }
+
+  function sdkHint() {
+    if (!sdkSelected || sdkSolved) return;
+    const [r, c] = sdkSelected;
+    if (sdkPuzzle[r][c] !== 0) return;
+    sdkBoard[r][c] = sdkSolution[r][c];
+    renderGrid();
+  }
+
+  function isSolved() {
+    for (let r = 0; r < 9; r++)
+      for (let c = 0; c < 9; c++)
+        if (sdkBoard[r][c] !== sdkSolution[r][c]) return false;
+    return true;
+  }
+
+  document.addEventListener('keydown', e => {
+    if (document.getElementById('sudoku-modal').style.display === 'none') return;
+    if (e.key >= '1' && e.key <= '9') sdkInput(+e.key);
+    if (e.key === 'Backspace' || e.key === 'Delete' || e.key === '0') sdkInput(0);
+    if (e.key === 'Escape') closeSudoku();
+    if (sdkSelected) {
+      const [r, c] = sdkSelected;
+      if (e.key === 'ArrowUp'    && r > 0) selectCell(r-1, c);
+      if (e.key === 'ArrowDown'  && r < 8) selectCell(r+1, c);
+      if (e.key === 'ArrowLeft'  && c > 0) selectCell(r, c-1);
+      if (e.key === 'ArrowRight' && c < 8) selectCell(r, c+1);
+    }
+  });
+
+  function generateSolution() {
+    const board = Array.from({length:9}, () => Array(9).fill(0));
+    solveSudoku(board);
+    return board;
+  }
+  function solveSudoku(board) {
+    for (let r = 0; r < 9; r++) {
+      for (let c = 0; c < 9; c++) {
+        if (board[r][c] === 0) {
+          const nums = shuffle([1,2,3,4,5,6,7,8,9]);
+          for (const n of nums) {
+            if (isValid(board, r, c, n)) {
+              board[r][c] = n;
+              if (solveSudoku(board)) return true;
+              board[r][c] = 0;
+            }
+          }
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+  function makePuzzle(solution, remove) {
+    const puzzle = solution.map(r => [...r]);
+    const cells = shuffle([...Array(81).keys()]);
+    let removed = 0;
+    for (const idx of cells) {
+      if (removed >= remove) break;
+      const r = Math.floor(idx/9), c = idx%9;
+      puzzle[r][c] = 0;
+      removed++;
+    }
+    return puzzle;
+  }
+  function isValid(board, row, col, num) {
+    for (let i = 0; i < 9; i++) {
+      if (board[row][i] === num) return false;
+      if (board[i][col] === num) return false;
+      const br = 3*Math.floor(row/3)+Math.floor(i/3);
+      const bc = 3*Math.floor(col/3)+i%3;
+      if (board[br][bc] === num) return false;
+    }
+    return true;
+  }
+  function shuffle(arr) {
+    for (let i = arr.length-1; i > 0; i--) {
+      const j = Math.floor(Math.random()*(i+1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
   }
 </script>
 </body>
