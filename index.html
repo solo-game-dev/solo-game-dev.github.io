@@ -50,6 +50,16 @@
       transition: background var(--transition-speed) ease, color var(--transition-speed) ease;
     }
 
+    @keyframes pageIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+    /* ─── SCROLL REVEAL ─── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.75s ease, transform 0.75s ease;
+    }
+    .reveal.revealed { opacity: 1; transform: translateY(0); }
+
     /* ─── THEME TOGGLE ─── */
     .theme-toggle {
       display: flex;
@@ -695,6 +705,9 @@
 </head>
 <body>
 
+<!-- RED TRANSITION OVERLAY -->
+<div id="transition-overlay" style="position:fixed;inset:0;z-index:9999;background:#e8333a;transform:translateX(-100%);pointer-events:none;transition:none;"></div>
+
 <!-- NAV -->
 <nav>
   <a href="#" class="nav-logo">
@@ -703,7 +716,7 @@
   </a>
   <div class="nav-right">
     <ul class="nav-links">
-      <li><a href="games.html">Games</a></li>
+      <li><a href="games.html" class="transition-link">Games</a></li>
       <li><a href="#about">About</a></li>
       <li><a href="#contact">Connect</a></li>
       <li><a href="https://sologame-dev.itch.io/" target="_blank">itch.io ↗</a></li>
@@ -736,7 +749,7 @@
         Creating unique gaming experiences – from PSX horror games to challenging puzzles.
       </p>
       <div class="hero-ctas">
-        <a href="games.html" class="btn btn-primary">View Games</a>
+        <a href="games.html" class="btn btn-primary transition-link">View Games</a>
         <a href="https://sologame-dev.itch.io/" target="_blank" class="btn btn-outline">itch.io ↗</a>
       </div>
       <div class="hero-stats">
@@ -766,14 +779,14 @@
 </section>
 
 <!-- GAMES TEASER -->
-<section id="games">
-  <div class="section-label">Portfolio</div>
+<section id="games" class="reveal">
+  <div class="section-label">Featured Games</div>
   <h2>THE GAMES</h2>
   <div style="border:1px solid var(--border); padding:3.5rem; transition:border-color var(--transition-speed) ease;">
     <p style="font-size:1.05rem; line-height:1.85; color:var(--grey); margin-bottom:2rem; max-width:560px; transition:color var(--transition-speed) ease;">
       From retro PSX horror to mind-bending puzzles — every project built solo with dedication. Five games and counting, each one a different world.
     </p>
-    <a href="games.html" class="btn btn-primary" style="display:inline-flex; align-items:center; gap:0.5rem;">
+    <a href="games.html" class="btn btn-primary transition-link" style="display:inline-flex; align-items:center; gap:0.5rem;">
       View All Games
       <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
     </a>
@@ -781,7 +794,7 @@
 </section>
 
 <!-- ABOUT -->
-<section id="about">
+<section id="about" class="reveal">
   <div class="about-inner">
     <div class="about-profile">
       <div class="profile-pic-wrap">
@@ -816,7 +829,7 @@
 </section>
 
 <!-- CONTACT -->
-<section id="contact">
+<section id="contact" class="reveal">
   <div class="contact-inner">
     <div>
       <div class="section-label">Find Me</div>
@@ -938,6 +951,45 @@
 </div>
 
 <script>
+  /* ── RED PAGE TRANSITION ── */
+  const _overlay = document.getElementById('transition-overlay');
+
+  function navigateTo(href) {
+    _overlay.style.transition = 'transform 0.42s cubic-bezier(0.76,0,0.24,1)';
+    _overlay.style.transform = 'translateX(0)';
+    setTimeout(() => { window.location.href = href; }, 430);
+  }
+
+  document.querySelectorAll('.transition-link').forEach(link => {
+    link.addEventListener('click', e => {
+      const href = link.getAttribute('href');
+      if (!href || href.startsWith('#') || href.startsWith('http')) return;
+      e.preventDefault();
+      navigateTo(href);
+    });
+  });
+
+  // Slide out on page load
+  window.addEventListener('pageshow', () => {
+    _overlay.style.transition = 'none';
+    _overlay.style.transform = 'translateX(0)';
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      _overlay.style.transition = 'transform 0.42s cubic-bezier(0.76,0,0.24,1)';
+      _overlay.style.transform = 'translateX(100%)';
+    }));
+  });
+
+  /* ── SCROLL REVEAL ── */
+  const _revealObs = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('revealed'), i * 80);
+        _revealObs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => _revealObs.observe(el));
+
   /* ─── HERO CAROUSEL ─── */
   const hcGames = [
     { cover: 'assets/night-shift.png', title: 'The Night Shift', tag: 'Horror · Survival' },

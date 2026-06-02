@@ -14,11 +14,23 @@
 
     *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
     html { scroll-behavior:smooth; }
-    body { background:var(--bg); color:var(--white); font-family:'Afacad',sans-serif; overflow-x:hidden; cursor:crosshair; transition:background var(--transition-speed) ease, color var(--transition-speed) ease; }
+    body {
+      background:var(--bg); color:var(--white);
+      font-family:'Afacad',sans-serif; overflow-x:hidden; cursor:crosshair;
+      transition:background var(--transition-speed) ease, color var(--transition-speed) ease;
+    }
 
     ::-webkit-scrollbar { width:3px; }
     ::-webkit-scrollbar-track { background:var(--bg); }
     ::-webkit-scrollbar-thumb { background:var(--red); }
+
+    /* ── PAGE TRANSITION OVERLAY ── */
+    #transition-overlay {
+      position:fixed; inset:0; z-index:9999;
+      background:var(--red);
+      transform:translateX(-100%);
+      pointer-events:none;
+    }
 
     /* ── NAV ── */
     nav {
@@ -28,11 +40,19 @@
       background:var(--nav-bg); backdrop-filter:blur(14px);
       border-bottom:1px solid var(--border);
       transition:background var(--transition-speed) ease, border-color var(--transition-speed) ease;
+      animation:fadeDown 0.6s 0.1s both;
     }
+    @keyframes fadeDown { from { opacity:0; transform:translateY(-16px); } to { opacity:1; transform:translateY(0); } }
+
     .nav-logo { display:flex; align-items:center; gap:0.75rem; text-decoration:none; }
     .nav-logo img { height:32px; width:32px; object-fit:contain; }
     .nav-logo span { font-family:'Bebas Neue',sans-serif; font-size:1.35rem; letter-spacing:0.12em; color:var(--white); transition:color var(--transition-speed) ease; }
     .nav-right { display:flex; align-items:center; gap:2rem; }
+    .nav-active {
+      color:var(--white) !important;
+      border-bottom:1px solid var(--red);
+      padding-bottom:2px;
+    }
     .nav-back {
       display:inline-flex; align-items:center; gap:0.5rem;
       color:var(--grey); text-decoration:none;
@@ -55,58 +75,54 @@
     [data-theme="light"] .icon-moon { opacity:1; }
     [data-theme="light"] .icon-sun  { opacity:0; position:absolute; }
 
-    /* ── PAGE HERO ── */
-    .page-hero {
-      min-height:100vh; display:flex; align-items:flex-end;
-      padding:9rem 3rem 5rem; position:relative; overflow:hidden;
-      border-bottom:1px solid var(--border);
-      transition:border-color var(--transition-speed) ease;
+    /* ── PAGE TITLE HEADER ── */
+    .page-title-bar {
+      padding: 7.5rem 3rem 2.5rem;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+      transition: border-color var(--transition-speed) ease;
     }
-    .page-hero-bg {
-      position:absolute; inset:0; z-index:0;
-      display:flex; align-items:center; justify-content:flex-end;
-      padding-right:2rem; pointer-events:none; user-select:none; overflow:hidden;
-    }
-    .page-hero-bg-text {
+    .page-title-bar::before {
+      content:'THE GAMES';
       font-family:'Bebas Neue',sans-serif;
-      font-size:clamp(16rem, 32vw, 30rem); line-height:1;
+      font-size:clamp(14rem,26vw,24rem); line-height:1;
       color:transparent; -webkit-text-stroke:1px var(--border);
+      position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+      white-space:nowrap; pointer-events:none; letter-spacing:-0.04em;
       opacity:0; animation:bgFadeIn 1.4s 0.4s forwards;
-      letter-spacing:-0.05em;
       transition:-webkit-text-stroke-color var(--transition-speed) ease;
     }
-    .page-hero-content { position:relative; z-index:1; }
-    .page-eyebrow {
+    .page-title-eyebrow {
       font-size:0.72rem; letter-spacing:0.3em; text-transform:uppercase;
-      color:var(--red); margin-bottom:1.5rem;
-      display:flex; align-items:center; gap:1rem;
-      opacity:0; animation:fadeUp 0.8s 0.15s forwards;
+      color:var(--red); display:flex; align-items:center; justify-content:center; gap:1rem;
+      margin-bottom:1.2rem; position:relative; z-index:1;
+      opacity:0; animation:fadeUp 0.7s 0.2s forwards;
     }
-    .page-eyebrow::before { content:''; display:block; width:40px; height:1px; background:var(--red); }
-    .page-hero-title {
+    .page-title-eyebrow::before, .page-title-eyebrow::after {
+      content:''; display:block; width:32px; height:1px; background:var(--red);
+    }
+    .page-title-main {
       font-family:'Bebas Neue',sans-serif;
-      font-size:clamp(5rem, 15vw, 14rem); line-height:0.88; letter-spacing:-0.01em;
-      color:var(--white); opacity:0; animation:fadeUp 0.8s 0.25s forwards;
+      font-size:clamp(4rem, 11vw, 10rem); line-height:0.9; letter-spacing:-0.01em;
+      color:var(--white); position:relative; z-index:1;
+      opacity:0; animation:fadeUp 0.7s 0.32s forwards;
       transition:color var(--transition-speed) ease;
     }
-    .page-hero-title span { color:var(--red); }
-    .page-hero-desc {
-      font-size:1.05rem; color:var(--grey); line-height:1.75; max-width:500px;
-      margin-top:2rem; opacity:0; animation:fadeUp 0.8s 0.4s forwards;
+    .page-title-main span { color:var(--red); }
+    .page-title-desc {
+      font-size:1rem; color:var(--grey); max-width:480px; margin:1.5rem auto 0;
+      line-height:1.8; position:relative; z-index:1;
+      opacity:0; animation:fadeUp 0.7s 0.44s forwards;
       transition:color var(--transition-speed) ease;
     }
-    .page-hero-stats {
-      display:flex; gap:3rem; margin-top:3rem;
-      opacity:0; animation:fadeUp 0.8s 0.55s forwards;
-    }
-    .hs-num { font-family:'Bebas Neue',sans-serif; font-size:2.8rem; line-height:1; color:var(--white); transition:color var(--transition-speed) ease; }
-    .hs-label { font-size:0.68rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--grey); margin-top:0.2rem; }
 
     /* Ticker */
     .games-ticker {
-      position:absolute; bottom:0; left:0; right:0;
-      border-top:1px solid var(--border); overflow:hidden; height:38px;
-      display:flex; align-items:center;
+      border-top:1px solid var(--border); overflow:hidden; height:36px;
+      display:flex; align-items:center; position:relative; z-index:1;
+      margin-top:2.5rem;
       transition:border-color var(--transition-speed) ease;
     }
     .ticker-track { display:flex; animation:ticker 22s linear infinite; white-space:nowrap; }
@@ -118,115 +134,134 @@
     }
     .ticker-dot { width:4px; height:4px; background:var(--red); border-radius:50%; flex-shrink:0; }
 
-    /* ── GAME FEATURE CARDS ── */
-    .game-feature {
-      display:grid; grid-template-columns:55% 45%;
-      min-height:65vh; border-bottom:1px solid var(--border); overflow:hidden;
-      position:relative;
-      opacity:0; transform:translateY(60px);
-      transition:opacity 0.85s ease, transform 0.85s ease, border-color var(--transition-speed) ease;
+    /* ── FEATURED GAMES GRID ── */
+    .featured-label {
+      padding: 4rem 3rem 0;
+      font-size:0.68rem; letter-spacing:0.3em; text-transform:uppercase;
+      color:var(--red); display:flex; align-items:center; gap:1rem;
+      opacity:0; animation:fadeUp 0.7s 0.5s forwards;
     }
-    .game-feature.revealed { opacity:1; transform:translateY(0); }
-    .game-feature:nth-child(even) { grid-template-columns:45% 55%; }
-    .game-feature:nth-child(even) .gf-image { order:2; }
-    .game-feature:nth-child(even) .gf-content { order:1; }
+    .featured-label::before { content:''; display:block; width:28px; height:1px; background:var(--red); }
 
-    /* Image */
-    .gf-image { position:relative; overflow:hidden; }
-    .gf-image img {
-      position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
-      transition:transform 0.9s ease, filter 0.5s ease;
-      filter:brightness(0.78) saturate(0.85);
-    }
-    .game-feature:hover .gf-image img { transform:scale(1.05); filter:brightness(1) saturate(1.05); }
-
-    /* Scanlines overlay */
-    .gf-image::after {
-      content:''; position:absolute; inset:0; z-index:1; pointer-events:none;
-      background:repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.04) 3px, rgba(0,0,0,0.04) 4px);
-      opacity:1; transition:opacity 0.5s;
-    }
-    .game-feature:hover .gf-image::after { opacity:0; }
-
-    /* Edge gradient bleed into text */
-    .gf-image::before {
-      content:''; position:absolute; inset:0; z-index:2; pointer-events:none;
-      transition:opacity 0.5s;
-    }
-    .game-feature:nth-child(odd) .gf-image::before { background:linear-gradient(to right, transparent 65%, var(--bg) 100%); }
-    .game-feature:nth-child(even) .gf-image::before { background:linear-gradient(to left, transparent 65%, var(--bg) 100%); }
-    .game-feature:hover .gf-image::before { opacity:0.4; }
-
-    /* Content */
-    .gf-content {
-      padding:4.5rem 4rem; display:flex; flex-direction:column;
-      justify-content:center; gap:1.6rem; background:var(--bg);
-      position:relative; transition:background 0.4s;
-    }
-    .game-feature:hover .gf-content { background:var(--bg2); }
-
-    /* Red side accent */
-    .gf-content::after {
-      content:''; position:absolute; top:0; left:0;
-      width:3px; height:0; background:var(--red); transition:height 0.65s ease;
-    }
-    .game-feature:nth-child(even) .gf-content::after { left:auto; right:0; }
-    .game-feature:hover .gf-content::after { height:100%; }
-
-    /* Big ghost number */
-    .gf-num {
-      font-family:'Bebas Neue',sans-serif; font-size:9rem; line-height:1;
-      color:var(--border); letter-spacing:-0.02em;
-      position:absolute; bottom:2rem; right:3rem;
-      pointer-events:none; transition:color 0.4s;
-    }
-    .game-feature:nth-child(even) .gf-num { right:auto; left:3rem; }
-    .game-feature:hover .gf-num { color:rgba(232,51,58,0.1); }
-
-    .gf-tag {
-      font-size:0.67rem; letter-spacing:0.25em; text-transform:uppercase;
-      color:var(--red); border:1px solid rgba(232,51,58,0.35);
-      display:inline-block; padding:0.22rem 0.65rem; align-self:flex-start;
-    }
-    .gf-title {
+    .featured-title {
+      padding: 1rem 3rem 2.5rem;
       font-family:'Bebas Neue',sans-serif;
-      font-size:clamp(3rem, 5.5vw, 5.5rem); line-height:0.9; letter-spacing:0.02em;
-      color:var(--white); transition:color var(--transition-speed) ease;
-    }
-    .gf-desc {
-      font-size:1.05rem; line-height:1.82; color:var(--grey); max-width:440px;
+      font-size:clamp(2.5rem,5vw,4.5rem); letter-spacing:0.02em; color:var(--white);
+      opacity:0; animation:fadeUp 0.7s 0.6s forwards;
       transition:color var(--transition-speed) ease;
     }
-    .gf-footer { display:flex; align-items:center; gap:1.2rem; flex-wrap:wrap; }
-    .gf-btn {
+
+    .games-grid {
+      display:grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap:2px;
+      background:var(--border);
+      width:100%;
+    }
+
+    .game-card {
+      background:var(--bg);
+      display:flex; flex-direction:column;
+      overflow:hidden; position:relative;
+      opacity:0; transform:translateY(40px);
+      transition:opacity 0.75s ease, transform 0.75s ease, background var(--transition-speed) ease;
+    }
+    .game-card.revealed { opacity:1; transform:translateY(0); }
+    .game-card:hover { background:var(--bg2); }
+
+    /* 16:9 banner — never cropped */
+    .gc-banner {
+      width:100%;
+      aspect-ratio:16/9;
+      overflow:hidden;
+      position:relative;
+      flex-shrink:0;
+      background:var(--bg3);
+    }
+    .gc-banner img {
+      width:100%; height:100%;
+      object-fit:contain;
+      display:block;
+      transition:transform 0.7s ease, filter 0.4s ease;
+      filter:brightness(0.88) saturate(0.88);
+    }
+    .game-card:hover .gc-banner img {
+      transform:scale(1.04);
+      filter:brightness(1) saturate(1.05);
+    }
+
+    /* Red left accent line */
+    .game-card::after {
+      content:''; position:absolute; top:0; left:0;
+      width:3px; height:0; background:var(--red);
+      transition:height 0.55s ease; z-index:5;
+    }
+    .game-card:hover::after { height:100%; }
+
+    .gc-body {
+      padding:2rem 2.2rem 2.2rem;
+      display:flex; flex-direction:column; gap:1rem; flex:1;
+    }
+    .gc-tag {
+      font-size:0.63rem; letter-spacing:0.25em; text-transform:uppercase;
+      color:var(--red); border:1px solid rgba(232,51,58,0.3);
+      display:inline-block; padding:0.15rem 0.5rem; align-self:flex-start;
+    }
+    .gc-name {
+      font-family:'Bebas Neue',sans-serif;
+      font-size:clamp(2rem,3.5vw,3.2rem); line-height:0.92; letter-spacing:0.02em;
+      color:var(--white);
+      transition:color var(--transition-speed) ease;
+    }
+    .gc-desc {
+      font-size:1rem; line-height:1.78; color:var(--grey); flex:1;
+      transition:color var(--transition-speed) ease;
+    }
+    .gc-footer { display:flex; align-items:center; gap:1rem; flex-wrap:wrap; margin-top:auto; padding-top:0.5rem; }
+    .gc-btn {
       display:inline-flex; align-items:center; gap:0.5rem;
-      padding:0.85rem 2rem; background:var(--red); color:#fff;
-      font-family:'Afacad',sans-serif; font-size:0.78rem;
+      padding:0.75rem 1.6rem; background:var(--red); color:#fff;
+      font-family:'Afacad',sans-serif; font-size:0.75rem;
       letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;
       transition:all 0.2s;
     }
-    .gf-btn:hover { background:var(--red2); transform:translateY(-2px); box-shadow:0 8px 24px rgba(232,51,58,0.35); }
-    .gf-status {
-      font-size:0.65rem; letter-spacing:0.15em; text-transform:uppercase;
-      padding:0.22rem 0.65rem; background:rgba(232,51,58,0.12); color:var(--red);
+    .gc-btn:hover { background:var(--red2); transform:translateY(-2px); box-shadow:0 8px 24px rgba(232,51,58,0.35); }
+    .gc-btn-play {
+      display:inline-flex; align-items:center; gap:0.5rem;
+      padding:0.75rem 1.6rem; background:transparent; color:var(--white);
+      border:1px solid var(--border);
+      font-family:'Afacad',sans-serif; font-size:0.75rem;
+      letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;
+      cursor:pointer; transition:all 0.2s;
+    }
+    .gc-btn-play:hover { border-color:var(--red); color:var(--red); }
+    .gc-status {
+      font-size:0.6rem; letter-spacing:0.15em; text-transform:uppercase;
+      padding:0.2rem 0.55rem; background:rgba(232,51,58,0.12); color:var(--red);
     }
 
     /* ── MORE GAMES ── */
     .more-section {
-      padding:5rem 3rem; border-bottom:1px solid var(--border);
+      padding:5rem 3rem; border-top:1px solid var(--border);
       transition:border-color var(--transition-speed) ease;
     }
     .more-label {
       font-size:0.68rem; letter-spacing:0.3em; text-transform:uppercase;
       color:var(--red); margin-bottom:0.9rem;
       display:flex; align-items:center; gap:1rem;
+      opacity:0; transform:translateY(20px);
+      transition:opacity 0.7s, transform 0.7s;
     }
+    .more-label.revealed { opacity:1; transform:none; }
     .more-label::before { content:''; display:block; width:28px; height:1px; background:var(--red); }
     .more-h2 {
       font-family:'Bebas Neue',sans-serif; font-size:clamp(2.5rem,5vw,4.5rem);
       letter-spacing:0.02em; color:var(--white); margin-bottom:2.5rem;
       transition:color var(--transition-speed) ease;
+      opacity:0; transform:translateY(20px);
+      transition:opacity 0.7s 0.1s, transform 0.7s 0.1s, color var(--transition-speed) ease;
     }
+    .more-h2.revealed { opacity:1; transform:none; }
     .more-games-list { display:flex; flex-wrap:wrap; gap:0.8rem; }
     .more-game-pill {
       display:inline-flex; align-items:center; gap:0.6rem;
@@ -234,7 +269,10 @@
       color:var(--grey); text-decoration:none; font-size:0.75rem; letter-spacing:0.08em;
       transition:all 0.2s, border-color var(--transition-speed) ease;
       position:relative;
+      opacity:0; transform:translateY(14px);
+      animation:none;
     }
+    .more-game-pill.revealed { opacity:1; transform:none; transition:opacity 0.5s, transform 0.5s, border-color 0.2s, color 0.2s; }
     .more-game-pill:hover { border-color:var(--red); color:var(--white); }
     .pill-tooltip {
       position:absolute; bottom:calc(100% + 10px); left:0; width:220px;
@@ -269,36 +307,41 @@
     .back-home svg { transition:transform 0.2s; }
     .back-home:hover svg { transform:translateX(-3px); }
 
+
     /* ── ANIMATIONS ── */
     @keyframes fadeUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
     @keyframes bgFadeIn { from { opacity:0; } to { opacity:1; } }
     @keyframes ticker { from { transform:translateX(0); } to { transform:translateX(-50%); } }
 
     /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .games-grid { grid-template-columns:1fr; }
+    }
     @media (max-width: 768px) {
       nav { padding:1rem 1.5rem; }
-      .page-hero { padding:7rem 1.5rem 4rem; min-height:75vh; }
-      .page-hero-bg-text { display:none; }
-      .page-hero-title { font-size:clamp(3.5rem,14vw,6rem); }
-      .game-feature, .game-feature:nth-child(even) { grid-template-columns:1fr; min-height:auto; }
-      .gf-image { height:56vw; order:-1 !important; }
-      .gf-content { order:1 !important; padding:2.5rem 1.5rem; }
-      .gf-num { font-size:5rem; }
+      .page-title-bar { padding:6rem 1.5rem 2rem; }
+      .page-title-bar::before { display:none; }
+      .featured-label, .featured-title { padding-left:1.5rem; padding-right:1.5rem; }
       .more-section { padding:3rem 1.5rem; }
       footer { flex-direction:column; gap:1rem; text-align:center; padding:1.4rem 1.5rem; }
+      .gc-body { padding:1.5rem 1.5rem 1.8rem; }
     }
   </style>
 </head>
 <body>
 
+<!-- RED TRANSITION OVERLAY -->
+<div id="transition-overlay"></div>
+
 <!-- NAV -->
 <nav>
-  <a href="index.html" class="nav-logo">
+  <a href="index.html" class="nav-logo transition-link">
     <img id="nav-logo" src="assets/profile-white.png" alt="SGD"/>
     <span>Solo Game Dev</span>
   </a>
   <div class="nav-right">
-    <a href="index.html" class="nav-back">
+    <span class="nav-active" style="font-size:0.8rem; letter-spacing:0.12em; text-transform:uppercase;">Games</span>
+    <a href="index.html" class="nav-back transition-link">
       <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
       Back to Home
     </a>
@@ -310,19 +353,11 @@
   </div>
 </nav>
 
-<!-- HERO -->
-<div class="page-hero">
-  <div class="page-hero-bg"><span class="page-hero-bg-text">5+</span></div>
-  <div class="page-hero-content">
-    <div class="page-eyebrow">Portfolio — All Games</div>
-    <h1 class="page-hero-title">THE<br><span>GAMES</span></h1>
-    <p class="page-hero-desc">From retro PSX horror to mind-bending puzzles — every project crafted solo with passion and obsession over detail.</p>
-    <div class="page-hero-stats">
-      <div><div class="hs-num">5+</div><div class="hs-label">Games</div></div>
-      <div><div class="hs-num">2</div><div class="hs-label">Featured</div></div>
-      <div><div class="hs-num">1</div><div class="hs-label">Dev</div></div>
-    </div>
-  </div>
+<!-- PAGE TITLE -->
+<div class="page-title-bar">
+  <div class="page-title-eyebrow">All Games</div>
+  <h1 class="page-title-main">THE <span>GAMES</span></h1>
+  <p class="page-title-desc">From retro PSX horror to mind-bending puzzles — every project crafted solo with passion and obsession over detail.</p>
   <div class="games-ticker">
     <div class="ticker-track">
       <span class="ticker-item"><span class="ticker-dot"></span>The Night Shift</span>
@@ -341,46 +376,51 @@
   </div>
 </div>
 
-<!-- FEATURED GAMES -->
-<div class="games-showcase">
+<!-- FEATURED SECTION LABEL -->
+<div class="featured-label">Featured Games</div>
+<div class="featured-title">FEATURED</div>
+
+<!-- GAMES GRID -->
+<div class="games-grid">
 
   <!-- The Night Shift -->
-  <div class="game-feature">
-    <div class="gf-image">
+  <div class="game-card">
+    <div class="gc-banner">
       <img src="assets/night-shift.png" alt="The Night Shift"/>
     </div>
-    <div class="gf-content">
-      <div class="gf-tag">Horror · Survival</div>
-      <h2 class="gf-title">The Night Shift</h2>
-      <p class="gf-desc">A retro PSX-style horror story set during the night shift of a remote gas station. Weird customers, creepy noises, and growing dread await. Can you survive till morning?</p>
-      <div class="gf-footer">
-        <a href="https://sologame-dev.itch.io/the-night-shift" class="gf-btn">
+    <div class="gc-body">
+      <div class="gc-tag">Horror · Survival</div>
+      <h2 class="gc-name">The Night Shift</h2>
+      <p class="gc-desc">A retro PSX-style horror story set during the night shift of a remote gas station. Weird customers, creepy noises, and growing dread await. Can you survive till morning?</p>
+      <div class="gc-footer">
+        <a href="https://sologame-dev.itch.io/the-night-shift" target="_blank" class="gc-btn">
           View on itch.io
-          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
-        <span class="gf-status">In Development</span>
+        <span class="gc-status">In Development</span>
       </div>
     </div>
   </div>
 
   <!-- Spin -->
-  <div class="game-feature">
-    <div class="gf-image">
+  <div class="game-card">
+    <div class="gc-banner">
       <img src="assets/spin.png" alt="Spin"/>
     </div>
-    <div class="gf-content">
-      <div class="gf-tag">Puzzle</div>
-      <h2 class="gf-title">Spin</h2>
-      <p class="gf-desc">You can't control the player — you control the level itself. Spin the world to move your character through clever puzzles. Short, polished, and deeply addictive.</p>
-      <div class="gf-footer">
-        <a href="https://sologame-dev.itch.io/spin" class="gf-btn">
+    <div class="gc-body">
+      <div class="gc-tag">Puzzle</div>
+      <h2 class="gc-name">Spin</h2>
+      <p class="gc-desc">You can't control the player — you control the level itself. Spin the world to move your character through clever puzzles. Short, polished, and deeply addictive.</p>
+      <div class="gc-footer">
+        <a href="https://sologame-dev.itch.io/spin" target="_blank" class="gc-btn">
           Download on itch.io
-          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
-        <span class="gf-status">Released</span>
+        <span class="gc-status">Released</span>
       </div>
     </div>
   </div>
+
 
 </div>
 
@@ -389,7 +429,6 @@
   <div class="more-label">Also on itch.io</div>
   <h2 class="more-h2">MORE GAMES</h2>
   <div class="more-games-list">
-
     <a href="https://sologame-dev.itch.io/infinite-breakout" target="_blank" class="more-game-pill">
       Infinite Breakout
       <div class="pill-tooltip">
@@ -400,7 +439,6 @@
         </div>
       </div>
     </a>
-
     <a href="https://sologame-dev.itch.io/totallyfairpong" target="_blank" class="more-game-pill">
       Totally Fair Pong
       <div class="pill-tooltip">
@@ -411,7 +449,6 @@
         </div>
       </div>
     </a>
-
     <a href="https://sologame-dev.itch.io/square" target="_blank" class="more-game-pill">
       Square
       <div class="pill-tooltip">
@@ -422,14 +459,13 @@
         </div>
       </div>
     </a>
-
     <a href="https://sologame-dev.itch.io/" target="_blank" class="more-game-pill" style="border-color:rgba(232,51,58,0.4);color:var(--red)">View all on itch.io →</a>
   </div>
 </div>
 
 <!-- FOOTER -->
 <footer>
-  <a href="index.html" class="back-home">
+  <a href="index.html" class="back-home transition-link">
     <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
     Back to Home
   </a>
@@ -437,7 +473,36 @@
   <a href="https://sologame-dev.itch.io/" target="_blank">itch.io ↗</a>
 </footer>
 
+
 <script>
+  /* ── RED PAGE TRANSITION ── */
+  const overlay = document.getElementById('transition-overlay');
+
+  function navigateTo(href) {
+    overlay.style.transition = 'transform 0.42s cubic-bezier(0.76,0,0.24,1)';
+    overlay.style.transform = 'translateX(0)';
+    setTimeout(() => { window.location.href = href; }, 430);
+  }
+
+  document.querySelectorAll('.transition-link').forEach(link => {
+    link.addEventListener('click', e => {
+      const href = link.getAttribute('href');
+      if (!href || href.startsWith('#') || href.startsWith('http')) return;
+      e.preventDefault();
+      navigateTo(href);
+    });
+  });
+
+  // Slide out on page load — identical to index.html
+  window.addEventListener('pageshow', () => {
+    overlay.style.transition = 'none';
+    overlay.style.transform = 'translateX(0)';
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      overlay.style.transition = 'transform 0.42s cubic-bezier(0.76,0,0.24,1)';
+      overlay.style.transform = 'translateX(100%)';
+    }));
+  });
+
   /* ── THEME ── */
   const label = document.getElementById('theme-label');
   const navLogo = document.getElementById('nav-logo');
@@ -451,15 +516,16 @@
   }
 
   /* ── SCROLL REVEAL ── */
-  const observer = new IntersectionObserver((entries) => {
+  const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach((entry, i) => {
       if (entry.isIntersecting) {
-        setTimeout(() => entry.target.classList.add('revealed'), i * 80);
-        observer.unobserve(entry.target);
+        setTimeout(() => entry.target.classList.add('revealed'), i * 100);
+        revealObserver.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.12 });
-  document.querySelectorAll('.game-feature').forEach(el => observer.observe(el));
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.game-card, .more-label, .more-h2, .more-game-pill').forEach(el => revealObserver.observe(el));
 </script>
 </body>
 </html>
