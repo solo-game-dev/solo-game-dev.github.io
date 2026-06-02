@@ -28,8 +28,16 @@
     #transition-overlay {
       position:fixed; inset:0; z-index:9999;
       background:var(--red);
-      transform:translateX(-100%);
+      transform:translateX(100%);
       pointer-events:none;
+    }
+    #transition-overlay.is-entering {
+      transform:translateX(0);
+      animation:overlayExit 0.42s cubic-bezier(0.76,0,0.24,1) forwards;
+    }
+    @keyframes overlayExit {
+      from { transform:translateX(0); }
+      to   { transform:translateX(100%); }
     }
 
     /* ── NAV ── */
@@ -479,6 +487,11 @@
   const overlay = document.getElementById('transition-overlay');
 
   function navigateTo(href) {
+    sessionStorage.setItem('page-transition', '1');
+    overlay.style.animation = 'none';
+    overlay.style.transition = 'none';
+    overlay.style.transform = 'translateX(100%)';
+    overlay.getBoundingClientRect();
     overlay.style.transition = 'transform 0.42s cubic-bezier(0.76,0,0.24,1)';
     overlay.style.transform = 'translateX(0)';
     setTimeout(() => { window.location.href = href; }, 430);
@@ -493,15 +506,11 @@
     });
   });
 
-  // Slide out on page load — identical to index.html
-  window.addEventListener('pageshow', () => {
-    overlay.style.transition = 'none';
-    overlay.style.transform = 'translateX(0)';
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      overlay.style.transition = 'transform 0.42s cubic-bezier(0.76,0,0.24,1)';
-      overlay.style.transform = 'translateX(100%)';
-    }));
-  });
+  // Slide out on page load — only when arriving via a transition link
+  if (sessionStorage.getItem('page-transition')) {
+    sessionStorage.removeItem('page-transition');
+    overlay.classList.add('is-entering');
+  }
 
   /* ── THEME ── */
   const label = document.getElementById('theme-label');

@@ -706,7 +706,12 @@
 <body>
 
 <!-- RED TRANSITION OVERLAY -->
-<div id="transition-overlay" style="position:fixed;inset:0;z-index:9999;background:#e8333a;transform:translateX(-100%);pointer-events:none;transition:none;"></div>
+<style>
+  #transition-overlay { position:fixed;inset:0;z-index:9999;background:#e8333a;transform:translateX(100%);pointer-events:none; }
+  #transition-overlay.is-entering { transform:translateX(0); animation:overlayExit 0.42s cubic-bezier(0.76,0,0.24,1) forwards; }
+  @keyframes overlayExit { from{transform:translateX(0)} to{transform:translateX(100%)} }
+</style>
+<div id="transition-overlay"></div>
 
 <!-- NAV -->
 <nav>
@@ -955,6 +960,11 @@
   const _overlay = document.getElementById('transition-overlay');
 
   function navigateTo(href) {
+    sessionStorage.setItem('page-transition', '1');
+    _overlay.style.animation = 'none';
+    _overlay.style.transition = 'none';
+    _overlay.style.transform = 'translateX(100%)';
+    _overlay.getBoundingClientRect();
     _overlay.style.transition = 'transform 0.42s cubic-bezier(0.76,0,0.24,1)';
     _overlay.style.transform = 'translateX(0)';
     setTimeout(() => { window.location.href = href; }, 430);
@@ -969,15 +979,11 @@
     });
   });
 
-  // Slide out on page load
-  window.addEventListener('pageshow', () => {
-    _overlay.style.transition = 'none';
-    _overlay.style.transform = 'translateX(0)';
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      _overlay.style.transition = 'transform 0.42s cubic-bezier(0.76,0,0.24,1)';
-      _overlay.style.transform = 'translateX(100%)';
-    }));
-  });
+  // Slide out on page load — only when arriving via a transition link
+  if (sessionStorage.getItem('page-transition')) {
+    sessionStorage.removeItem('page-transition');
+    _overlay.classList.add('is-entering');
+  }
 
   /* ── SCROLL REVEAL ── */
   const _revealObs = new IntersectionObserver((entries) => {
