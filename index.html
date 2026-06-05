@@ -768,11 +768,13 @@
     <div class="hero-carousel">
       <div class="hc-main">
 
-        <div class="hc-slide active"><a class="hc-slide-link" href="https://sologame-dev.itch.io/the-night-shift" target="_blank"></a><img src="assets/night-shift.png" alt="The Night Shift" /><div class="hc-slide-overlay"></div><div class="hc-slide-label"><div><div class="hc-slide-title">The Night Shift</div><div class="hc-slide-tag">Horror · Survival</div></div><a href="https://sologame-dev.itch.io/the-night-shift" target="_blank" class="btn btn-primary" style="padding:0.5rem 1rem;font-size:0.65rem;position:relative;z-index:2;">Play ↗</a></div></div>
+        <div class="hc-slide active"><a class="hc-slide-link" href="https://sologame-dev.itch.io/launchpad" target="_blank"></a><img src="assets/banner.png" alt="LaunchPad" /><div class="hc-slide-overlay"></div><div class="hc-slide-label"><div><div class="hc-slide-title">LaunchPad</div><div class="hc-slide-tag">Windows · Desktop App</div></div><a href="https://sologame-dev.itch.io/launchpad" target="_blank" class="btn btn-primary" style="padding:0.5rem 1rem;font-size:0.65rem;position:relative;z-index:2;">Download ↗</a></div></div>
+
+        <div class="hc-slide"><a class="hc-slide-link" href="https://sologame-dev.itch.io/the-night-shift" target="_blank"></a><img src="assets/night-shift.png" alt="The Night Shift" /><div class="hc-slide-overlay"></div><div class="hc-slide-label"><div><div class="hc-slide-title">The Night Shift</div><div class="hc-slide-tag">Horror · Survival</div></div><a href="https://sologame-dev.itch.io/the-night-shift" target="_blank" class="btn btn-primary" style="padding:0.5rem 1rem;font-size:0.65rem;position:relative;z-index:2;">Play ↗</a></div></div>
 
         <div class="hc-slide"><a class="hc-slide-link" href="https://sologame-dev.itch.io/spin" target="_blank"></a><img src="assets/spin.png" alt="Spin" /><div class="hc-slide-overlay"></div><div class="hc-slide-label"><div><div class="hc-slide-title">Spin</div><div class="hc-slide-tag">Puzzle</div></div><a href="https://sologame-dev.itch.io/spin" target="_blank" class="btn btn-primary" style="padding:0.5rem 1rem;font-size:0.65rem;position:relative;z-index:2;">Play ↗</a></div></div>
 
-        <div class="hc-slide"><a class="hc-slide-link" href="https://sologame-dev.itch.io/launchpad" target="_blank"></a><img src="assets/banner.png" alt="LaunchPad" /><div class="hc-slide-overlay"></div><div class="hc-slide-label"><div><div class="hc-slide-title">LaunchPad</div><div class="hc-slide-tag">Windows · Desktop App</div></div><a href="https://sologame-dev.itch.io/launchpad" target="_blank" class="btn btn-primary" style="padding:0.5rem 1rem;font-size:0.65rem;position:relative;z-index:2;">Download ↗</a></div></div>
+        
 
         <button class="hc-arrow prev" onclick="hcMove(-1)">&#8249;</button>
         <button class="hc-arrow next" onclick="hcMove(1)">&#8250;</button>
@@ -1000,9 +1002,10 @@
 
   /* ─── HERO CAROUSEL ─── */
   const hcGames = [
+    { cover: 'assets/banner.png',      title: 'LaunchPad',       tag: 'Windows · Desktop App' },
     { cover: 'assets/night-shift.png', title: 'The Night Shift', tag: 'Horror · Survival' },
     { cover: 'assets/spin.png',        title: 'Spin',            tag: 'Puzzle'            },
-    { cover: 'assets/banner.png',      title: 'LaunchPad',       tag: 'Windows · Desktop App' },
+    
   ];
 
   let hcCurrent = 0;
