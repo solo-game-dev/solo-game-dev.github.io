@@ -721,7 +721,7 @@
   </a>
   <div class="nav-right">
     <ul class="nav-links">
-      <li><a href="games.html" class="transition-link">Games</a></li>
+      <li><a href="games.html" class="transition-link">Games &amp; Tools</a></li>
       <li><a href="#about">About</a></li>
       <li><a href="#contact">Connect</a></li>
       <li><a href="https://sologame-dev.itch.io/" target="_blank">itch.io ↗</a></li>
@@ -754,7 +754,7 @@
         Creating unique gaming experiences – from PSX horror games to challenging puzzles.
       </p>
       <div class="hero-ctas">
-        <a href="games.html" class="btn btn-primary transition-link">View Games</a>
+        <a href="games.html" class="btn btn-primary transition-link">View Games &amp; Tools</a>
         <a href="https://sologame-dev.itch.io/" target="_blank" class="btn btn-outline">itch.io ↗</a>
       </div>
       <div class="hero-stats">
@@ -772,6 +772,8 @@
 
         <div class="hc-slide"><a class="hc-slide-link" href="https://sologame-dev.itch.io/spin" target="_blank"></a><img src="assets/spin.png" alt="Spin" /><div class="hc-slide-overlay"></div><div class="hc-slide-label"><div><div class="hc-slide-title">Spin</div><div class="hc-slide-tag">Puzzle</div></div><a href="https://sologame-dev.itch.io/spin" target="_blank" class="btn btn-primary" style="padding:0.5rem 1rem;font-size:0.65rem;position:relative;z-index:2;">Play ↗</a></div></div>
 
+        <div class="hc-slide"><a class="hc-slide-link" href="https://sologame-dev.itch.io/launchpad" target="_blank"></a><img src="assets/banner.png" alt="LaunchPad" /><div class="hc-slide-overlay"></div><div class="hc-slide-label"><div><div class="hc-slide-title">LaunchPad</div><div class="hc-slide-tag">Windows · Desktop App</div></div><a href="https://sologame-dev.itch.io/launchpad" target="_blank" class="btn btn-primary" style="padding:0.5rem 1rem;font-size:0.65rem;position:relative;z-index:2;">Download ↗</a></div></div>
+
         <button class="hc-arrow prev" onclick="hcMove(-1)">&#8249;</button>
         <button class="hc-arrow next" onclick="hcMove(1)">&#8250;</button>
       </div>
@@ -785,14 +787,14 @@
 
 <!-- GAMES TEASER -->
 <section id="games" class="reveal">
-  <div class="section-label">Featured Games</div>
-  <h2>THE GAMES</h2>
+  <div class="section-label">Featured Games &amp; Tools</div>
+  <h2>THE GAMES &amp; TOOLS</h2>
   <div style="border:1px solid var(--border); padding:3.5rem; transition:border-color var(--transition-speed) ease;">
     <p style="font-size:1.05rem; line-height:1.85; color:var(--grey); margin-bottom:2rem; max-width:560px; transition:color var(--transition-speed) ease;">
-      From retro PSX horror to mind-bending puzzles — every project built solo with dedication. Five games and counting, each one a different world.
+      From retro PSX horror to mind-bending puzzles and desktop tools — every project built solo with dedication. Five games and tools and counting, each one a different world.
     </p>
     <a href="games.html" class="btn btn-primary transition-link" style="display:inline-flex; align-items:center; gap:0.5rem;">
-      View All Games
+      View All Games &amp; Tools
       <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
     </a>
   </div>
@@ -817,10 +819,10 @@
       <h2>ABOUT</h2>
       <p>
         <strong>Solo Game Dev</strong> is a small independent studio that focuses on developing
-        unique gaming experiences in every genre.
+        unique gaming experiences and useful tools in every genre.
       </p>
       <p>
-        From dark <strong>PSX-style horror</strong> to quick <strong>puzzle games</strong> —
+        From dark <strong>PSX-style horror</strong> to quick <strong>puzzle games</strong> and handy <strong>desktop tools</strong> —
         Each project gets developed with dedication and passion.
         Only creativity and love for games.
       </p>
@@ -1000,6 +1002,7 @@
   const hcGames = [
     { cover: 'assets/night-shift.png', title: 'The Night Shift', tag: 'Horror · Survival' },
     { cover: 'assets/spin.png',        title: 'Spin',            tag: 'Puzzle'            },
+    { cover: 'assets/banner.png',      title: 'LaunchPad',       tag: 'Windows · Desktop App' },
   ];
 
   let hcCurrent = 0;

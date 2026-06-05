@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Games — Solo Game Dev</title>
+  <title>Games &amp; Tools — Solo Game Dev</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Afacad:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="assets/profile-white.png">
@@ -93,7 +93,7 @@
       transition: border-color var(--transition-speed) ease;
     }
     .page-title-bar::before {
-      content:'THE GAMES';
+      content:'THE GAMES & TOOLS';
       font-family:'Bebas Neue',sans-serif;
       font-size:clamp(14rem,26vw,24rem); line-height:1;
       color:transparent; -webkit-text-stroke:1px var(--border);
@@ -234,15 +234,6 @@
       transition:all 0.2s;
     }
     .gc-btn:hover { background:var(--red2); transform:translateY(-2px); box-shadow:0 8px 24px rgba(232,51,58,0.35); }
-    .gc-btn-play {
-      display:inline-flex; align-items:center; gap:0.5rem;
-      padding:0.75rem 1.6rem; background:transparent; color:var(--white);
-      border:1px solid var(--border);
-      font-family:'Afacad',sans-serif; font-size:0.75rem;
-      letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;
-      cursor:pointer; transition:all 0.2s;
-    }
-    .gc-btn-play:hover { border-color:var(--red); color:var(--red); }
     .gc-status {
       font-size:0.6rem; letter-spacing:0.15em; text-transform:uppercase;
       padding:0.2rem 0.55rem; background:rgba(232,51,58,0.12); color:var(--red);
@@ -321,6 +312,8 @@
     @keyframes bgFadeIn { from { opacity:0; } to { opacity:1; } }
     @keyframes ticker { from { transform:translateX(0); } to { transform:translateX(-50%); } }
 
+
+
     /* ── RESPONSIVE ── */
     @media (max-width: 900px) {
       .games-grid { grid-template-columns:1fr; }
@@ -348,7 +341,7 @@
     <span>Solo Game Dev</span>
   </a>
   <div class="nav-right">
-    <span class="nav-active" style="font-size:0.8rem; letter-spacing:0.12em; text-transform:uppercase;">Games</span>
+    <span class="nav-active" style="font-size:0.8rem; letter-spacing:0.12em; text-transform:uppercase;">Games &amp; Tools</span>
     <a href="index.html" class="nav-back transition-link">
       <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
       Back to Home
@@ -363,19 +356,21 @@
 
 <!-- PAGE TITLE -->
 <div class="page-title-bar">
-  <div class="page-title-eyebrow">All Games</div>
-  <h1 class="page-title-main">THE <span>GAMES</span></h1>
-  <p class="page-title-desc">From retro PSX horror to mind-bending puzzles — every project crafted solo with passion and obsession over detail.</p>
+  <div class="page-title-eyebrow">All Games &amp; Tools</div>
+  <h1 class="page-title-main">THE <span>GAMES</span> & TOOLS</h1>
+  <p class="page-title-desc">From retro PSX horror to mind-bending puzzles and desktop tools — every project crafted solo with passion and obsession over detail.</p>
   <div class="games-ticker">
     <div class="ticker-track">
       <span class="ticker-item"><span class="ticker-dot"></span>The Night Shift</span>
       <span class="ticker-item"><span class="ticker-dot"></span>Spin</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>LaunchPad</span>
       <span class="ticker-item"><span class="ticker-dot"></span>Infinite Breakout</span>
       <span class="ticker-item"><span class="ticker-dot"></span>Totally Fair Pong</span>
       <span class="ticker-item"><span class="ticker-dot"></span>Square</span>
       <span class="ticker-item"><span class="ticker-dot"></span>More Coming</span>
       <span class="ticker-item"><span class="ticker-dot"></span>The Night Shift</span>
       <span class="ticker-item"><span class="ticker-dot"></span>Spin</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>LaunchPad</span>
       <span class="ticker-item"><span class="ticker-dot"></span>Infinite Breakout</span>
       <span class="ticker-item"><span class="ticker-dot"></span>Totally Fair Pong</span>
       <span class="ticker-item"><span class="ticker-dot"></span>Square</span>
@@ -385,7 +380,7 @@
 </div>
 
 <!-- FEATURED SECTION LABEL -->
-<div class="featured-label">Featured Games</div>
+<div class="featured-label">Featured Games &amp; Tools</div>
 <div class="featured-title">FEATURED</div>
 
 <!-- GAMES GRID -->
@@ -429,13 +424,31 @@
     </div>
   </div>
 
+  <!-- LaunchPad -->
+  <div class="game-card">
+    <div class="gc-banner">
+      <img src="assets/banner.png" alt="LaunchPad"/>
+    </div>
+    <div class="gc-body">
+      <div class="gc-tag">Windows · Desktop App</div>
+      <h2 class="gc-name">LaunchPad</h2>
+      <p class="gc-desc">A sleek desktop launcher built for gamers. Organize and launch all your games from one place with a clean, minimal interface designed for speed and simplicity.</p>
+      <div class="gc-footer">
+        <a href="https://sologame-dev.itch.io/launchpad" target="_blank" class="gc-btn">
+          Download on itch.io
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <span class="gc-status">Released</span>
+      </div>
+    </div>
+  </div>
 
 </div>
 
 <!-- MORE GAMES -->
 <div class="more-section">
   <div class="more-label">Also on itch.io</div>
-  <h2 class="more-h2">MORE GAMES</h2>
+  <h2 class="more-h2">MORE GAMES &amp; TOOLS</h2>
   <div class="more-games-list">
     <a href="https://sologame-dev.itch.io/infinite-breakout" target="_blank" class="more-game-pill">
       Infinite Breakout
@@ -470,6 +483,8 @@
     <a href="https://sologame-dev.itch.io/" target="_blank" class="more-game-pill" style="border-color:rgba(232,51,58,0.4);color:var(--red)">View all on itch.io →</a>
   </div>
 </div>
+
+
 
 <!-- FOOTER -->
 <footer>
