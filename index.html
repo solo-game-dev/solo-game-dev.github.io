@@ -700,6 +700,41 @@
       opacity: 1;
       transform: translateY(-50%) translateX(0);
     }
+    #ahmed-avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%; overflow: visible;
+      cursor: pointer; text-decoration: none;
+      display: block; flex-shrink: 0; position: relative;
+    }
+    #ahmed-avatar img {
+      width: 36px; height: 36px;
+      border-radius: 50%; object-fit: cover;
+      display: block; border: 2px solid transparent;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    [data-theme="dark"] #ahmed-avatar:hover img {
+      border-color: #fff;
+      box-shadow: 0 0 0 2px #fff, 0 4px 20px var(--shadow);
+    }
+    [data-theme="light"] #ahmed-avatar:hover img {
+      border-color: #000;
+      box-shadow: 0 0 0 2px #000, 0 4px 20px var(--shadow);
+    }
+    #ahmed-tooltip {
+      position: absolute; top: 50%;
+      right: calc(100% + 10px);
+      transform: translateY(-50%) translateX(4px);
+      background: var(--bg2); border: 1px solid var(--border);
+      color: var(--grey); font-family: 'Afacad', sans-serif;
+      font-size: 0.65rem; letter-spacing: 0.14em;
+      text-transform: uppercase; white-space: nowrap;
+      padding: 0.35rem 0.75rem; pointer-events: none;
+      opacity: 0; transition: opacity 0.2s, transform 0.2s;
+      box-shadow: 0 4px 16px var(--shadow);
+    }
+    #ahmed-avatar:hover #ahmed-tooltip {
+      opacity: 1; transform: translateY(-50%) translateX(0);
+    }
   </style>
   <link rel="icon" type="image/png" href="assets/profile-white.png">
 </head>
@@ -768,11 +803,13 @@
     <div class="hero-carousel">
       <div class="hc-main">
 
-        <div class="hc-slide active"><a class="hc-slide-link" href="https://sologame-dev.itch.io/the-night-shift" target="_blank"></a><img src="assets/night-shift.png" alt="The Night Shift" /><div class="hc-slide-overlay"></div><div class="hc-slide-label"><div><div class="hc-slide-title">The Night Shift</div><div class="hc-slide-tag">Horror · Survival</div></div><a href="https://sologame-dev.itch.io/the-night-shift" target="_blank" class="btn btn-primary" style="padding:0.5rem 1rem;font-size:0.65rem;position:relative;z-index:2;">Play ↗</a></div></div>
+        <div class="hc-slide active"><a class="hc-slide-link" href="https://sologame-dev.itch.io/launchpad" target="_blank"></a><img src="assets/banner.png" alt="LaunchPad" /><div class="hc-slide-overlay"></div><div class="hc-slide-label"><div><div class="hc-slide-title">LaunchPad</div><div class="hc-slide-tag">Windows · Desktop App</div></div><a href="https://sologame-dev.itch.io/launchpad" target="_blank" class="btn btn-primary" style="padding:0.5rem 1rem;font-size:0.65rem;position:relative;z-index:2;">Download ↗</a></div></div>
+
+        <div class="hc-slide"><a class="hc-slide-link" href="https://sologame-dev.itch.io/the-night-shift" target="_blank"></a><img src="assets/night-shift.png" alt="The Night Shift" /><div class="hc-slide-overlay"></div><div class="hc-slide-label"><div><div class="hc-slide-title">The Night Shift</div><div class="hc-slide-tag">Horror · Survival</div></div><a href="https://sologame-dev.itch.io/the-night-shift" target="_blank" class="btn btn-primary" style="padding:0.5rem 1rem;font-size:0.65rem;position:relative;z-index:2;">Play ↗</a></div></div>
 
         <div class="hc-slide"><a class="hc-slide-link" href="https://sologame-dev.itch.io/spin" target="_blank"></a><img src="assets/spin.png" alt="Spin" /><div class="hc-slide-overlay"></div><div class="hc-slide-label"><div><div class="hc-slide-title">Spin</div><div class="hc-slide-tag">Puzzle</div></div><a href="https://sologame-dev.itch.io/spin" target="_blank" class="btn btn-primary" style="padding:0.5rem 1rem;font-size:0.65rem;position:relative;z-index:2;">Play ↗</a></div></div>
 
-        <div class="hc-slide"><a class="hc-slide-link" href="https://sologame-dev.itch.io/launchpad" target="_blank"></a><img src="assets/banner.png" alt="LaunchPad" /><div class="hc-slide-overlay"></div><div class="hc-slide-label"><div><div class="hc-slide-title">LaunchPad</div><div class="hc-slide-tag">Windows · Desktop App</div></div><a href="https://sologame-dev.itch.io/launchpad" target="_blank" class="btn btn-primary" style="padding:0.5rem 1rem;font-size:0.65rem;position:relative;z-index:2;">Download ↗</a></div></div>
+        
 
         <button class="hc-arrow prev" onclick="hcMove(-1)">&#8249;</button>
         <button class="hc-arrow next" onclick="hcMove(1)">&#8250;</button>
@@ -901,6 +938,10 @@
 
   <!-- Sudoku button — right -->
   <button id="sudoku-fab" onclick="openSudoku()">Play Sudoku</button>
+  <a id="ahmed-avatar" href="https://ahmed-ouederni.is-a.dev/" target="_blank" rel="noopener">
+    <img src="https://ahmed-ouederni.is-a.dev/assets/logo.jpg" alt="Ahmed Ouederni" />
+    <div id="ahmed-tooltip">Made by Ahmed Ouederni</div>
+  </a>
 </footer>
 
 <!-- SUDOKU MODAL -->
@@ -1000,9 +1041,10 @@
 
   /* ─── HERO CAROUSEL ─── */
   const hcGames = [
+    { cover: 'assets/banner.png',      title: 'LaunchPad',       tag: 'Windows · Desktop App' },
     { cover: 'assets/night-shift.png', title: 'The Night Shift', tag: 'Horror · Survival' },
     { cover: 'assets/spin.png',        title: 'Spin',            tag: 'Puzzle'            },
-    { cover: 'assets/banner.png',      title: 'LaunchPad',       tag: 'Windows · Desktop App' },
+    
   ];
 
   let hcCurrent = 0;
