@@ -85,7 +85,77 @@
     [data-theme="light"] .icon-moon { opacity: 1; transform: rotate(0deg); }
     [data-theme="light"] .icon-sun  { opacity: 0; position: absolute; }
 
+    /* ─── HAMBURGER ─── */
+    .hamburger {
+      display: none;
+      flex-direction: column; justify-content: center; align-items: center;
+      gap: 4px;
+      background: none; border: 1px solid var(--border);
+      cursor: pointer; padding: 8px 10px;
+      transition: border-color 0.2s, background var(--transition-speed) ease;
+      z-index: 101;
+    }
+    .hamburger:hover { border-color: var(--red); }
+    .hamburger-line {
+      display: block;
+      width: 16px; height: 1.5px;
+      background: var(--grey);
+      transition: transform 0.3s, opacity 0.3s, background 0.3s;
+      border-radius: 1px;
+    }
+    .hamburger.active .hamburger-line:nth-child(1) {
+      transform: translateY(5.5px) rotate(45deg);
+    }
+    .hamburger.active .hamburger-line:nth-child(2) {
+      opacity: 0;
+    }
+    .hamburger.active .hamburger-line:nth-child(3) {
+      transform: translateY(-5.5px) rotate(-45deg);
+    }
+    .hamburger.active .hamburger-line { background: var(--red); }
 
+    /* ─── MOBILE MENU ─── */
+    .mobile-menu {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      z-index: 99;
+      background: rgba(0,0,0,0.93);
+      backdrop-filter: blur(24px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+    [data-theme="light"] .mobile-menu {
+      background: rgba(245,242,238,0.95);
+    }
+    .mobile-menu.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .mobile-menu-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 2rem;
+    }
+    .mobile-nav-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .mobile-nav-links a {
+      color: var(--grey);
+      text-decoration: none;
+      font-size: 1.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-family: 'Bebas Neue', sans-serif;
+      transition: color 0.2s;
+      padding: 0.6rem 1rem;
+    }
+    .mobile-nav-links a:hover { color: var(--red); }
 
     /* ─── NAV ─── */
     nav {
@@ -574,11 +644,21 @@
     ::-webkit-scrollbar-thumb { background: var(--red); }
 
     /* ─── RESPONSIVE ─── */
+    /* max-width queries ordered largest→smallest for correct cascade */
+
+    /* ── Tablets portrait ── */
     @media (max-width: 768px) {
       nav { padding: 1rem 1.5rem; }
       .nav-links { display: none; }
+      .hamburger { display: flex; }
       #hero { padding: 7rem 1.5rem 4rem; }
       .hero-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+      .hero-content { text-align: center; }
+      .hero-eyebrow { justify-content: center; }
+      .hero-eyebrow::before { display: none; }
+      .hero-desc { margin-left: auto; margin-right: auto; }
+      .hero-ctas { justify-content: center; }
+      .hero-stats { justify-content: center; }
       section { padding: 4rem 1.5rem; }
       .about-inner { grid-template-columns: 1fr; gap: 2.5rem; }
       .contact-inner { grid-template-columns: 1fr; gap: 3rem; }
@@ -589,7 +669,148 @@
       .game-row-right { height: 200px; order: -1; }
       .game-row-right::before { background: linear-gradient(to bottom, transparent 60%, var(--bg) 100%) !important; }
       .game-row:hover .game-row-right::before { background: linear-gradient(to bottom, transparent 60%, var(--bg2) 100%) !important; }
-      .game-row-left { padding: 1.8rem 1.5rem; }
+      .game-row-left { padding: 1.8rem 1.5rem; align-items: center; text-align: center; }
+      .game-row-footer { justify-content: center; }
+
+      #sudoku-box { max-width: 92vw; padding: 1rem; }
+    }
+
+    /* ── Small phones ── */
+    @media (max-width: 480px) {
+      nav { padding: 0.8rem 1.2rem; }
+      .nav-logo span { font-size: 1.1rem; }
+      .nav-logo img { height: 26px; width: 26px; }
+      .hamburger { padding: 8px 10px; }
+      .hamburger-line { width: 14px; height: 1.3px; }
+      .nav-right { gap: 0.7rem; }
+      .theme-toggle { padding: 0.35rem 0.6rem; font-size: 0.62rem; }
+      #hero { padding: 6rem 1.2rem 3rem; }
+      .hero-inner { gap: 1.8rem; }
+      h1 { margin-bottom: 1.2rem; }
+      .hero-ctas { flex-direction: column; }
+      .hero-ctas .btn { width: 100%; justify-content: center; }
+      .hero-stats { gap: 1.5rem; }
+      h2 { font-size: clamp(2rem, 8vw, 2.8rem); margin-bottom: 2rem; }
+      .game-row-right { height: 160px; }
+      .game-row-left { padding: 1.4rem 1.2rem; }
+      .game-row-title { font-size: 1.3rem; }
+      .profile-pic-wrap, .profile-pic { width: 150px; height: 150px; }
+      .about-text p { font-size: 0.92rem; }
+      .social-link { font-size: 0.7rem; padding: 0.8rem 1rem; }
+      .contact-cta h3 { font-size: 2.2rem; }
+      .more-games-list { gap: 0.6rem; }
+      .more-game-pill { padding: 0.5rem 0.9rem; font-size: 0.68rem; }
+      .hc-main { min-height: 200px; }
+      .hc-arrow { width: 28px; height: 28px; font-size: 0.9rem; }
+      .mobile-nav-links a { font-size: 1.5rem; }
+    }
+
+    /* ── Extra small phones ── */
+    @media (max-width: 375px) {
+      nav { padding: 0.8rem 1rem; }
+      .nav-logo span { font-size: 1.05rem; }
+      h1 { font-size: clamp(3rem, 14vw, 4.5rem); }
+      #hero { padding: 6rem 1rem 3rem; }
+      .hero-desc { font-size: 0.9rem; }
+      section { padding: 3rem 1rem; }
+      .hero-stats { gap: 1.2rem; flex-wrap: wrap; }
+      .stat-num { font-size: 1.8rem; }
+      .stat-label { font-size: 0.6rem; }
+      .profile-pic-wrap, .profile-pic { width: 130px; height: 130px; }
+      .about-inner { gap: 1.8rem; }
+      .contact-inner { gap: 2rem; }
+      .contact-cta h3 { font-size: 2rem; }
+      .hc-main { min-height: 180px; }
+      .hc-slide-title { font-size: 1rem; }
+      .hc-slide-label { padding: 0.6rem 0.8rem; }
+      .game-row-left { padding: 1.2rem 1rem; }
+      .game-row-title { font-size: 1.2rem; }
+      .game-row-desc { font-size: 0.85rem; -webkit-line-clamp: 3; line-clamp: 3; }
+      .game-row-right { height: 140px; }
+      #sudoku-box { padding: 0.8rem; }
+      .sdk-cell { font-size: 0.55rem; }
+      .sdk-num-btn { font-size: 0.7rem; padding: 0.2rem; }
+      .games-teaser-box { padding: 1.5rem !important; }
+    }
+
+    /* ── Medium phones ── */
+    @media (min-width: 376px) and (max-width: 480px) {
+      .games-teaser-box { padding: 2rem !important; }
+    }
+
+    /* ── Phones landscape ── */
+    @media (min-width: 481px) and (max-width: 600px) {
+      nav { padding: 0.9rem 1.5rem; }
+      #hero { padding: 6rem 1.5rem 3rem; }
+      .hero-inner { gap: 2rem; }
+      .hero-stats { gap: 1.5rem; }
+      .hero-ctas { flex-direction: row; }
+      .game-row-right { height: 180px; }
+      .game-row-left { padding: 1.5rem 1.2rem; }
+      section { padding: 3.5rem 1.5rem; }
+    }
+
+    /* ── Small tablets ── */
+    @media (min-width: 769px) and (max-width: 900px) {
+      nav { padding: 1rem 2rem; }
+      .nav-links { gap: 1.5rem; }
+      .nav-links a { font-size: 0.7rem; }
+      .nav-right { gap: 1.2rem; }
+      #hero { padding: 7rem 2rem 4rem; }
+      .hero-inner { gap: 2.5rem; }
+      .hero-stats { gap: 1.5rem; }
+      .game-row { grid-template-columns: 200px 1fr; }
+      .game-row-left { padding: 0.6rem 1rem; }
+      .game-row-title { font-size: 1.2rem; }
+      .game-row-desc { font-size: 0.85rem; -webkit-line-clamp: 3; line-clamp: 3; }
+    }
+
+    /* ── Tablets landscape / small laptops ── */
+    @media (min-width: 901px) and (max-width: 1024px) {
+      nav { padding: 1rem 2rem; }
+      .nav-links { gap: 1.6rem; }
+      #hero { padding: 7rem 2rem 4rem; }
+      .hero-inner { gap: 3rem; }
+      .about-inner { gap: 3rem; }
+      .contact-inner { gap: 3rem; }
+      .game-row { grid-template-columns: 220px 1fr; }
+      section { padding: 5rem 2rem; }
+    }
+
+    /* ── Medium screens ── */
+    @media (min-width: 1025px) and (max-width: 1399px) {
+      .hero-inner { gap: 3rem; }
+      .about-inner { gap: 4rem; }
+      .contact-inner { gap: 4rem; }
+    }
+
+    /* ── Large screens ── */
+    @media (min-width: 1400px) {
+      nav { padding: 1.1rem 5rem; }
+      #hero { padding: 8rem 5rem 5rem; }
+      section { padding: 6rem 5rem; }
+      .hero-inner { gap: 5rem; }
+      .hero-desc { font-size: 1.1rem; max-width: 520px; }
+      .about-inner { gap: 6rem; }
+      .contact-inner { gap: 7rem; }
+      .hero-stats { gap: 3rem; }
+      .stat-num { font-size: 3rem; }
+      .game-row-left { padding: 1rem 2rem; }
+      .game-row-title { font-size: 1.8rem; }
+      .game-row-desc { font-size: 1.05rem; }
+    }
+
+    /* ── Ultrawide ── */
+    @media (min-width: 1920px) {
+      body { max-width: 1920px; margin: 0 auto; }
+      nav { padding: 1.3rem 6rem; }
+      #hero { padding: 9rem 6rem 6rem; }
+      section { padding: 7rem 6rem; }
+      .hero-inner { gap: 6rem; }
+      .contact-inner { gap: 8rem; }
+      .about-inner { gap: 8rem; }
+      h1 { font-size: clamp(12rem, 10vw, 14rem); }
+      .game-row { grid-template-columns: 300px 1fr; }
     }
 
     /* ─── SUDOKU ─── */
@@ -783,8 +1004,32 @@
       </svg>
       <span id="theme-label">Light</span>
     </button>
+    <button class="hamburger" onclick="toggleMobileMenu()" aria-label="Menu">
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </button>
   </div>
 </nav>
+
+<!-- MOBILE MENU -->
+<div id="mobile-menu" class="mobile-menu" onclick="closeMobileMenu()">
+  <div class="mobile-menu-inner" onclick="event.stopPropagation()">
+    <ul class="mobile-nav-links">
+      <li><a href="games.html" class="transition-link" onclick="closeMobileMenu()">Games &amp; Tools</a></li>
+      <li><a href="#about" onclick="closeMobileMenu()">About</a></li>
+      <li><a href="#contact" onclick="closeMobileMenu()">Connect</a></li>
+      <li><a href="https://sologame-dev.itch.io/" target="_blank" onclick="closeMobileMenu()">itch.io ↗</a></li>
+    </ul>
+    <div style="margin-top:1.5rem;text-align:center;">
+      <button class="theme-toggle" onclick="toggleTheme();closeMobileMenu()" aria-label="Toggle theme" style="margin:0 auto;">
+        <svg class="icon-sun" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <svg class="icon-moon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <span id="mobile-theme-label">Light</span>
+      </button>
+    </div>
+  </div>
+</div>
 
 <!-- HERO -->
 <section id="hero">
@@ -837,7 +1082,7 @@
 <section id="games" class="reveal">
   <div class="section-label">Featured Games &amp; Tools</div>
   <h2>THE GAMES &amp; TOOLS</h2>
-  <div style="border:1px solid var(--border); padding:3.5rem; transition:border-color var(--transition-speed) ease;">
+  <div class="games-teaser-box" style="border:1px solid var(--border); padding:3.5rem; transition:border-color var(--transition-speed) ease;">
     <p style="font-size:1.05rem; line-height:1.85; color:var(--grey); margin-bottom:2rem; max-width:560px; transition:color var(--transition-speed) ease;">
       From retro PSX horror to mind-bending puzzles and desktop tools — every project built solo with dedication. Five games and tools and counting, each one a different world.
     </p>
@@ -950,7 +1195,7 @@
   <!-- Sudoku button — right -->
   <button id="sudoku-fab" onclick="openSudoku()">Play Sudoku</button>
   <a id="ahmed-avatar" href="https://ahmed-ouederni.is-a.dev/" target="_blank" rel="noopener">
-    <img src="https://ahmed-ouederni.is-a.dev/assets/logo.jpg" alt="Ahmed Ouederni" />
+    <img src="https://ahmed-ouederni.is-a.dev/assets/image.png" alt="Ahmed Ouederni" />
     <div id="ahmed-tooltip">Made by Ahmed Ouederni</div>
   </a>
 </footer>
@@ -1151,7 +1396,10 @@
     const isDark = html.getAttribute('data-theme') === 'dark';
     const newTheme = isDark ? 'light' : 'dark';
     html.setAttribute('data-theme', newTheme);
-    label.textContent = isDark ? 'Dark' : 'Light';
+    const labelText = isDark ? 'Dark' : 'Light';
+    label.textContent = labelText;
+    const mobileLabel = document.getElementById('mobile-theme-label');
+    if (mobileLabel) mobileLabel.textContent = labelText;
     Object.entries(logoMap).forEach(([id, srcs]) => {
       const el = document.getElementById(id);
       if (el) el.src = srcs[newTheme];
@@ -1366,6 +1614,51 @@
       [arr[i], arr[j]] = [arr[j], arr[i]];
     }
     return arr;
+  }
+
+  /* ── MOBILE MENU ── */
+  const mobileMenu = document.getElementById('mobile-menu');
+  const hamburger = document.querySelector('.hamburger');
+
+  function toggleMobileMenu() {
+    const isOpen = mobileMenu.classList.toggle('open');
+    hamburger.classList.toggle('active');
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  }
+
+  function closeMobileMenu() {
+    mobileMenu.classList.remove('open');
+    hamburger.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  // Close mobile menu on Escape key
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && mobileMenu.classList.contains('open')) {
+      closeMobileMenu();
+    }
+  });
+
+  /* ── TOUCH CAROUSEL ── */
+  let hcTouchStartX = 0;
+  let hcTouchStartY = 0;
+  const hcEl = document.querySelector('.hc-main');
+  if (hcEl) {
+    hcEl.addEventListener('touchstart', e => {
+      const t = e.touches[0];
+      hcTouchStartX = t.clientX;
+      hcTouchStartY = t.clientY;
+    }, { passive: true });
+
+    hcEl.addEventListener('touchend', e => {
+      const t = e.changedTouches[0];
+      const dx = t.clientX - hcTouchStartX;
+      const dy = t.clientY - hcTouchStartY;
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+        if (dx < 0) hcMove(1);
+        else hcMove(-1);
+      }
+    }, { passive: true });
   }
 </script>
 </body>
