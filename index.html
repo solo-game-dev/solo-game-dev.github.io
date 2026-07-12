@@ -1280,6 +1280,15 @@
     });
   });
 
+  // Reset overlay on bfcache restore (phone back button)
+  window.addEventListener('pageshow', function(e) {
+    if (e.persisted) {
+      _overlay.style.transition = 'none';
+      _overlay.style.transform = 'translateX(100%)';
+      void _overlay.getBoundingClientRect();
+    }
+  });
+
   // Slide out on page load — only when arriving via a transition link
   if (sessionStorage.getItem('page-transition')) {
     sessionStorage.removeItem('page-transition');
